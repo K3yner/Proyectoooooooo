@@ -25,23 +25,60 @@ class ContabilidadDiaria():
  
 
 
-
-
-
-
     def controles_barra_superior(self):
         fecha = datetime.date.today()
-
+        #Botones de la contabilidad diaria
         self.boton_Fecha = tk.Button(self.barra_superior1, text = "Fecha:", command= lambda: cnt.mostrar_calendario(self.fecha_Label))
-        self.boton_Fecha.pack(side=tk.LEFT)
+        self.boton_Fecha.grid(row=0,column=0)
         string_fecha = gen.fecha_letras(fecha)
         self.fecha_Label = tk.Label(self.barra_superior1,text=string_fecha)
-        self.fecha_Label.pack(side= tk.LEFT)
-
+        self.fecha_Label.grid(row=0,column=1)
+        
         self.Añadir_Ingreso_Diario = tk. Button(self.barra_inferior, text="Añadir Ingreso",command= lambda: cnt.añadirIngreso(cnt.ventas,ppro.productos))
         self.Añadir_Ingreso_Diario.grid(row=2, column=1)
         self.Añadir_Pago_Diario = tk. Button(self.barra_inferior, text="Añadir Pago", command= lambda: cnt.añadirPago(cnt.inversiones,fecha))
         self.Añadir_Pago_Diario.grid(row=2, column=2)
+        
+        def cambiarA_mensual():
+            #Por ahora estoy borrando y recolocando los botones, pero luego mejor
+            #creemos subventanas para diario y mensual
+            self.Añadir_Ingreso_Diario.grid_forget()
+            self.Añadir_Pago_Diario.grid_forget()
+            self.boton_Fecha.grid_forget()
+            self.conta_mensual.grid_forget()
+            self.Añadir_Pago_Mensual.grid(row=2, column=3)
+            self.Añadir_Ingreso_Mensual.grid(row=2, column=2)
+            self.boton_Mes.grid(row=0, column=0)
+            self.fecha_Label["text"] = "Abril"  #Temporal
+            self.conta_diaria.grid(row = 8, column = 2)
+        
+        self.conta_mensual = tk.Button(self.barra_inferior,text="Mensual",command = cambiarA_mensual)
+        self.conta_mensual.grid(row=8, column = 2)
+        
+        def cambiarA_diario():
+            #Por ahora estoy borrando los botones, pero luego mejor
+            #creemos subventanas para diario y mensual
+            self.Añadir_Pago_Mensual.grid_forget()
+            self.Añadir_Ingreso_Mensual.grid_forget()
+            self.boton_Mes.grid_forget()
+            self.conta_diaria.grid_forget()
+            self.Añadir_Ingreso_Diario.grid(row=2, column=1)
+            self.Añadir_Pago_Diario.grid(row=2, column=2)
+            self.boton_Fecha.grid(row=0,column=0)
+            self.fecha_Label["text"] = gen.fecha_letras(datetime.date.today())
+            self.conta_mensual.grid(row=8, column = 2)
+            
+        #Botones de la conta mensual
+        self.Añadir_Ingreso_Mensual = tk. Button(self.barra_inferior, text="Añadir Ingreso", command= lambda: cnt.añadirIngreso(cnt.ventas,ppro.productos,boton_fecha=True))
+        self.Añadir_Pago_Mensual = tk. Button(self.barra_inferior, text="Añadir Pago", command= lambda: cnt.añadirPago(cnt.inversiones,fecha,boton_fecha=True))
+        self.boton_Mes = tk.Button(self.barra_inferior, text="Mes: ", command = cnt.mes)
+        self.conta_diaria = tk.Button(self.barra_inferior, text="Diario", command = cambiarA_diario)
+        
+
+            
+
+    
+    
     """"
         def abrir_cuadro(self):
             cuadro = ttk.Treeview(self.barra_inferior, columns=("col1", "col2", "col3"))
