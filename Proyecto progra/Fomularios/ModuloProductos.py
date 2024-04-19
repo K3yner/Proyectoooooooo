@@ -1,4 +1,3 @@
-#import ModuloGeneral as gen
 from Fomularios import ModuloGeneral as gen
 from util import Ventana as util_ventana
 import tkinter as tk
