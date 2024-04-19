@@ -32,22 +32,14 @@ def seleccionar_fecha(calendario,cal,seleccionar,fecha_Label="no"):
     seleccionar.destroy()
 
 #FUNCIONES PARA AÑADIR INGRESO
-def añadirIngreso(ventas,productos):
+def añadirIngreso(ventas,productos,boton_fecha=False):
     popUp_ingresos = tk.Toplevel()
-    popUp_ingresos.withdraw()
-    popUp_ingresos.title("Añadir un ingreso") #Título
-    popUp_ingresos.protocol("WM_DELETE_WINDOW", popUp_ingresos.withdraw)
-    # Botón Fecha
-    fecha = datetime.date.today()
-    #Colocar el popUP
-    calendario = tk.Toplevel()
-    calendario.title("Seleccionar fecha") #Título
-    #Ocultar popUp
-    calendario.withdraw()
-    #Crear calendario
-    cal = Calendar(calendario,locale='es_ES', selectmode="day",maxdate=datetime.date.today())
-    popUp_ingresos.config(width=500, height=200) #Dimensiones
-    popUp_ingresos.deiconify()
+    if boton_fecha != False:
+        fecha_ingreso = tk.Button(popUp_ingresos,text = "Fecha",command=lambda:mostrar_calendario(fecha_Label))
+        fecha_ingreso.grid(row = 4, column=1)
+        string_fecha = gen.fecha_letras(datetime.date.today())
+        fecha_Label = tk.Label(popUp_ingresos,text=string_fecha)
+        fecha_Label.grid(row=4,column=2)
     #Labels con las instrucciones
     tk.Label(popUp_ingresos, text = "Cantidad:").grid(row = 0, column = 3)
     #Colocar la caja de texto para que el usuario ingrese la cantidad
@@ -73,6 +65,7 @@ def añadirIngreso(ventas,productos):
         aceptar.grid(row = 2, column = 2)
         cancelar = tk.Button(popUp_ingresos, text = "Cancelar", command = popUp_ingresos.withdraw)
         cancelar.grid(row= 4, column = 3)
+
     
 def aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas,nombres_productos):
     #Lista de los precios de los productos
@@ -100,18 +93,22 @@ def aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas,nombres_p
 
         
 #FUNCIONES PARA AÑADIR PAGO
-def añadirPago(inversiones,fecha):
-
-    cal = Calendar(locale='es_ES', selectmode="day",maxdate=datetime.date.today())
-    #Colocar el popUP
+def añadirPago(inversiones,fecha,boton_fecha=False):
+    #Crear el popUP
     popUp_pagos = tk.Toplevel()
     popUp_pagos.title("Añadir un egreso") #Título
     popUp_pagos.protocol("WM_DELETE_WINDOW", popUp_pagos.withdraw)
-    popUp_pagos.withdraw()
     marcar_Recurrente = tk.Button(popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(marcar_Recurrente))
     marcar_Inversion = tk.Button(popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(marcar_Inversion))
-    popUp_pagos.deiconify()
     popUp_pagos.config(width=500, height=200) #Dimensiones
+    
+    if boton_fecha != False:
+        fecha_ingreso = tk.Button(popUp_pagos,text = "Fecha",command=lambda:mostrar_calendario(fecha_Label))
+        fecha_ingreso.grid(row = 4, column=1)
+        string_fecha = gen.fecha_letras(datetime.date.today())
+        fecha_Label = tk.Label(popUp_pagos,text=string_fecha)
+        fecha_Label.grid(row=4,column=2)
+
     #Labels con las instrucciones
     tk.Label(popUp_pagos, text = "Nombre del pago").grid(row = 0, column = 1)
     tk.Label(popUp_pagos, text = "Monto del pago").grid(row = 0, column = 3)
@@ -181,19 +178,4 @@ def aceptarPago(popUp_pagos,cajaTexto1,cajaTexto2,pagos,marcar_Recurrente,marcar
 #CONTA MENSUAL
 def mes():
     print(datetime.date.today()) #TEMPORAL
-
-def añadirPago_mensual(popUp_pagos,recurrentes,pagos,marcar_Recurrente,marcar_Inversion,inversiones,calendario):
-    añadirPago(popUp_pagos,recurrentes,pagos,marcar_Recurrente,marcar_Inversion,inversiones)
-    fecha_pago = tk.Button(popUp_pagos,text = "Fecha",command=lambda:mostrar_calendario(fecha_Label,calendario,))
-    fecha_pago.grid(row = 4, column=1)
-    string_fecha = gen.fecha_letras(datetime.date.today())
-    fecha_Label = tk.Label(popUp_pagos,text=string_fecha)
-    fecha_Label.grid(row=4,column=2)
-    
-def añadirIngreso_mensual(ventas,productos,popUp_ingresos):
-    añadirIngreso(ventas,productos,popUp_ingresos,)
-    fecha_pago = tk.Button(popUp_ingresos,text = "Fecha",command=lambda:mostrar_calendario(fecha_Label,calendario))
-    fecha_pago.grid(row = 4, column=1)
-    string_fecha = gen.fecha_letras(datetime.date.today())
-    fecha_Label = tk.Label(popUp_ingresos,text=string_fecha)
-    fecha_Label.grid(row=4,column=2)
+     
