@@ -97,6 +97,7 @@ def texto_buscador_productos(evento,buscador_productos):
     buscador_productos.insert(0,"🔎                       Buscar un producto")
 
 def buscar_producto(self,evento,buscador_productos,productos,ventana):
+    find = False
     busqueda = buscador_productos.get()
     buscador_productos.delete(0, tk.END)
     buscador_productos.insert(0,"🔎                       Buscar un producto")
@@ -116,8 +117,9 @@ def buscar_producto(self,evento,buscador_productos,productos,ventana):
                     eliminar.grid(row=7,column=3)
                     volver= tk.Button(self, text="Volver",command=lambda:regresar(nombreL,precioL,categoriaL,editar,eliminar,volver))
                     volver.grid(row=7,column=1)
-                else:
-                    gen.advertencia("El producto no se ha encontrado")
+                    find = True
+        if find !=True:
+            gen.advertencia("El producto no se ha encontrado")
 
     except KeyError:
         gen.advertencia("El producto no se ha encontrado")
