@@ -36,7 +36,7 @@ def aceptarCategoria(popUp,cajaTexto1,productos): #Cuando se presiona el botón 
         popUp.destroy() #Destruir el popup
     
 #FUNCIONES PARA AÑADIR PRODUCTO
-def añadirProducto(productos,command_cancel="destroy"):
+def añadirProducto(productos,Textocaja1 = "no",Textocaja2="no",command_cancel="destroy"):
     #Colocar el popUP
     popUp = tk.Toplevel()
     popUp.title("Añadir un producto") #Título
@@ -51,6 +51,11 @@ def añadirProducto(productos,command_cancel="destroy"):
     cajaTexto2 = tk.Entry(popUp)
     cajaTexto1.grid(row = 1, column = 1)
     cajaTexto2.grid(row = 1, column = 3)
+    #Si el parámetro "cajas" es verdadero, poner texto de relleno en las cajas
+    if Textocaja1 != "no":
+        cajaTexto1.insert(0,Textocaja1)
+    if Textocaja2 != "no":
+        cajaTexto2.insert(0,Textocaja2)
     #Menu de categorías
     global categoria
     categoria = tk.StringVar(popUp,"Categoría")
@@ -119,12 +124,12 @@ def buscar_producto(self,evento,buscador_productos,productos,ventana):
                     find = True
         if find !=True:
             gen.advertencia("El producto no se ha encontrado")
-
     except KeyError:
         gen.advertencia("El producto no se ha encontrado")
+        
 def editar_producto(productos,x,y,ventana,nombreL,precioL,categoriaL,editar,eliminar,volver):
     productos[x]["editado"] = productos[x].pop(y)
-    añadirProducto(productos,command_cancel=lambda:cancel_Edit(productos,x,y))
+    añadirProducto(productos,y,productos[x]["editado"],command_cancel=lambda:cancel_Edit(productos,x,y))
     productos[x].pop("editado")
     regresar(nombreL,precioL,categoriaL,editar,eliminar,volver)
     
