@@ -14,8 +14,8 @@ from Fomularios.PaginaContabilidad import ContabilidadDiaria
 class pagina(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.img_sitio_construccion = util_img.leer_imagen(".Imagenes/sitio_construccion.png", (300,300))
-        self.img_sitio_construccion2 = util_img.leer_imagen(".Imagenes/grua.jpg", (300,300))
+        self.img_sitio_construccion = util_img.leer_imagen("./Imagenes/sitio_construccion.png", (300,300))
+        self.img_sitio_construccion2 = util_img.leer_imagen("./Imagenes/grua.jpg", (300,300))
         self.config_ventana()
         self.panels()
         self.controles_barraSuperior()
