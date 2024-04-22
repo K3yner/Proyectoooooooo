@@ -16,12 +16,16 @@ def advertencia(advertencia,borrar="no"):
         borrar.delete(0,"end")
     
 #Botón cancelar para destruir un popUp 
-#Parámetro popUp = toplevel que se desea destruir 
+#popUp = toplevel donde estará el botón y que se destruirá
+#Row y Column: dónde se pondrá el botón
+#Command_cancel: si no se especifica, el botón solo destruye el popUp
+#Si se da un parámetro, el botón ejecuta esa función y luego destruye el botón
 def cancelar(popUp, Row, Column,command_cancel="destroy"):
-    if command_cancel=="destroy":
-        cancelar = tk.Button(popUp, text = "Cancelar", command = popUp.destroy)
-    else:
-        cancelar = tk.Button(popUp, text = "Cancelar", command = command_cancel)
+    def Cancel(command_cancel):
+        if command_cancel!="destroy":
+            command_cancel()
+        popUp.destroy()
+    cancelar = tk.Button(popUp, text = "Cancelar", command = lambda:Cancel(command_cancel))
     cancelar.grid(row= Row, column = Column)
     
 def check(boton):

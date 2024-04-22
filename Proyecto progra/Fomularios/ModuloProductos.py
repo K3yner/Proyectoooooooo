@@ -128,16 +128,17 @@ def buscar_producto(self,evento,buscador_productos,productos,ventana):
         gen.advertencia("El producto no se ha encontrado")
         
 def editar_producto(productos,x,y,ventana,nombreL,precioL,categoriaL,editar,eliminar,volver):
-    productos[x]["editado"] = productos[x].pop(y)
-    añadirProducto(productos,y,productos[x]["editado"],command_cancel=lambda:cancel_Edit(productos,x,y))
-    productos[x].pop("editado")
+    editado = productos[x].pop(y)
+    añadirProducto(productos,y,editado,command_cancel=lambda:cancel_Edit(productos,x,y,editado))
     regresar(nombreL,precioL,categoriaL,editar,eliminar,volver)
     
-def cancel_Edit(productos,x,y):
-    productos[x][y] = productos[x].pop("editado")
+def cancel_Edit(productos,x,y,editado):
+    productos[x][y] = editado
+    print(productos)
     
 def eliminar_producto(productos,x,y,nombreL,precioL,categoriaL,editar,eliminar,volver):
     productos[x].pop(y)
+    print(productos)
     gen.advertencia("El producto ha sido eliminado")
     regresar(nombreL,precioL,categoriaL,editar,eliminar,volver)
         
