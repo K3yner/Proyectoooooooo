@@ -1,7 +1,7 @@
 from Fomularios import ModuloGeneral as gen
 from util import Ventana as util_ventana
 import tkinter as tk
-
+import pandas as pd
 
     
 

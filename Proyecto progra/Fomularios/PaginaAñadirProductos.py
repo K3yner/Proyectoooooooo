@@ -4,16 +4,13 @@ from Fomularios import ModuloGeneral as gen
 from Fomularios import ModuloProductos as pr
 import pandas as pd
 
-#productos = {"Sin categoría":{}}
-
+#Crear o abrir el df / csv de productos
 try:
     productos = pd.read_csv("productos.csv")
 except:
     cosa = {"producto": [], "precio":[], "categoría":[]}
     columnas = ["producto", "precio","categoría"]
-
     productos = pd.DataFrame(cosa, columns= columnas)
-
     productos.to_csv("productos.csv")
     productos = pd.read_csv("productos.csv")
 #Eliminar la columna inútil de index que tiene el csv >:v

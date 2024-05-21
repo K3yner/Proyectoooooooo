@@ -2,11 +2,7 @@ import tkinter as tk
 from Fomularios import ModuloGeneral as gen
 import datetime
 from tkcalendar import Calendar
-
-ventas = []
-pagos = []
-recurrentes = {}
-inversiones = []
+import pandas as pd
 
 
 #FUNCIONES PARA DEFINIR LA FECHA
@@ -34,7 +30,9 @@ def seleccionar_fecha(calendario,cal,seleccionar,fecha_Label="no"):
 
 #FUNCIONES PARA AÑADIR INGRESO
 def añadirIngreso(ventas,productos,boton_fecha=False):
+    #Crear la ventana emergente
     popUp_ingresos = tk.Toplevel()
+    #Crear el botón fecha
     if boton_fecha != False:
         fecha_ingreso = tk.Button(popUp_ingresos,text = "Fecha",command=lambda:mostrar_calendario(fecha_Label))
         fecha_ingreso.grid(row = 4, column=1)
@@ -46,34 +44,25 @@ def añadirIngreso(ventas,productos,boton_fecha=False):
     #Colocar la caja de texto para que el usuario ingrese la cantidad
     cajaTexto2 = tk.Entry(popUp_ingresos)
     cajaTexto2.grid(row = 1, column = 3)
-    #Lista de productos
-    nombres_productos = [] 
-    for x in productos:
-        for y in productos[x]:
-            nombres_productos.append(y)
     #Si no se han añadido productos, no pueden añadirse ventas
-    if nombres_productos == []:
+    if len(productos) < 1:
         gen.advertencia("Aún no se han añadido productos, por lo tanto aún no pueden añadirse ventas")
         popUp_ingresos.withdraw()
     else:
     #Botón para elegir un producto
         global producto
         producto = tk.StringVar(popUp_ingresos,"Producto")
-        menu = tk.OptionMenu(popUp_ingresos, producto, *nombres_productos) 
+        #lista_productos = productos["producto"].tolist()
+        menu = tk.OptionMenu(popUp_ingresos, producto, *productos["producto"]) 
         menu.grid(row=2, column = 1)
     #Botones aceptar y cancelar
-        aceptar = tk.Button(popUp_ingresos, text = "Aceptar", command = lambda: aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas,nombres_productos))
+        aceptar = tk.Button(popUp_ingresos, text = "Aceptar", command = lambda: aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas))
         aceptar.grid(row = 2, column = 2)
         cancelar = tk.Button(popUp_ingresos, text = "Cancelar", command = popUp_ingresos.withdraw)
         cancelar.grid(row= 4, column = 3)
 
     
-def aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas,nombres_productos):
-    #Lista de los precios de los productos
-    precios_productos = []
-    for x in productos:
-        for y in productos[x]:
-            precios_productos.append(productos[x][y])
+def aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas):
     #Recuperar el valor del menú
     producto = producto.get()
     try:
@@ -84,11 +73,15 @@ def aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas,nombres_p
             gen.advertencia("Por favor seleccione un producto", cajaTexto2)
         #Agregar la venta al diccionario de ventas
         else:
-            ingreso = cantidad*precios_productos[nombres_productos.index(producto)]
+            indice = productos.index[productos["producto"]==producto]
+            precio_producto = float(productos.iloc[indice,1])
+            ingreso = cantidad*precio_producto
             try: 
-                ventas.append([producto, cantidad, ingreso, fecha])
+                ventas.loc[len(ventas)] = [producto, cantidad, ingreso, fecha]
+                ventas.to_csv("ventas.csv")
             except NameError:
-                ventas.append([producto, cantidad, ingreso, datetime.date.today()])
+                ventas.loc[len(ventas)] = [producto, cantidad, ingreso, datetime.date.today()]
+                ventas.to_csv("ventas.csv")
             print(ventas) #Print temporal para ver si funciona correctamente
             popUp_ingresos.withdraw()
         #Si la cantidad ingresada no es un número entero, mostrar error
@@ -97,7 +90,7 @@ def aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas,nombres_p
 
         
 #FUNCIONES PARA AÑADIR PAGO
-def añadirPago(inversiones,fecha,boton_fecha=False):
+def añadirPago(pagos,inversiones,recurrentes,boton_fecha=False):
     #Crear el popUP
     popUp_pagos = tk.Toplevel()
     popUp_pagos.title("Añadir un egreso") #Título
@@ -129,10 +122,10 @@ def añadirPago(inversiones,fecha,boton_fecha=False):
     marcar_Inversion.configure(text = "  ")
     marcar_Inversion.grid(row=3,column=1)
     #Menu de Pagos Recurrentes
-    if recurrentes != {}:
+    if len(recurrentes) > 0:
         global recurrente
         recurrente = tk.StringVar(popUp_pagos,"Pagos Recurrentes")
-        menu = tk.OptionMenu(popUp_pagos, recurrente, *recurrentes.keys(),command = lambda x: pagoRecurrente(x,cajaTexto1,cajaTexto2,recurrentes)) 
+        menu = tk.OptionMenu(popUp_pagos, recurrente, *recurrentes["pago"],command = lambda x: pagoRecurrente(x,cajaTexto1,cajaTexto2,recurrentes)) 
         menu.grid(row=2, column = 3)
     #Botones aceptar y cancelar
     aceptar = tk.Button(popUp_pagos, text = "Aceptar", command = lambda: aceptarPago(popUp_pagos,cajaTexto1,cajaTexto2,pagos,marcar_Recurrente,marcar_Inversion,recurrentes,inversiones))
@@ -142,7 +135,8 @@ def añadirPago(inversiones,fecha,boton_fecha=False):
     
 def pagoRecurrente(recurrente,cajaTexto1,cajaTexto2,recurrentes):
     cajaTexto1.insert(0,recurrente)
-    cajaTexto2.insert(0,recurrentes[recurrente])
+    indice = recurrentes.index[recurrentes["pago"]==recurrente]
+    cajaTexto2.insert(0,float(recurrentes.iloc[indice,1]))
     
 def aceptarPago(popUp_pagos,cajaTexto1,cajaTexto2,pagos,marcar_Recurrente,marcar_Inversion,recurrentes,inversiones):
     try:
@@ -155,27 +149,33 @@ def aceptarPago(popUp_pagos,cajaTexto1,cajaTexto2,pagos,marcar_Recurrente,marcar
             gen.advertencia("Por favor poner nombre al pago",cajaTexto1)
         #Agregar el pago al diccionario de pagos, con su monto
         else:
-            pagos.append([pago,monto,fecha])
+            try:
+                pagos.loc[len(pagos)] = [pago, monto, fecha]
+            except NameError:
+                pagos.loc[len(pagos)] = [pago, monto, datetime.date.today()]
+            pagos.to_csv("pagos.csv")
             print(pagos) #Print temporal para ver si funciona correctamente
             popUp_pagos.withdraw()
-            #Si el precio ingresado no es un número, mostrar error
-    except:
+    #Si el precio ingresado no es un número, mostrar error
+    except TypeError:
         #Si el monto no es un número, mostrar error
         gen.advertencia("El monto ingresado no es válido. Por favor intente de nuevo", cajaTexto2)
-    #Si se marcó el pago como recurrente, añadir a recurrentes (NO FUNCIONAL)
+    #Si se marcó el pago como recurrente, añadir a recurrentes 
     if marcar_Recurrente.cget("text") == "✓":
-        error = False #Variable de control de errores
         #Si el nombre del pago ya está en recurrentes, mostrar error
-        for x in recurrentes:
-            if x == pago:
-                error = True 
-                gen.advertencia("Ya existe un pago recurrente con este nombre. Se ha añadido el pago, pero no se ha añadido a recurrentes")
-        if error == False:
-            recurrentes[pago] = monto
+        if pago in recurrentes.pago.values:
+            gen.advertencia("Ya existe un pago recurrente con este nombre. Se ha añadido el pago, pero no se ha añadido a recurrentes")
+        else:
+            recurrentes.loc[len(recurrentes)] = [pago, monto]
+            recurrentes.to_csv("recurrentes.csv")
         print(recurrentes) 
-    #Si se marcó el pago como inversión, añadir a inversiones (NO FUNCIONAL)
+    #Si se marcó el pago como inversión, añadir a inversiones 
     if marcar_Inversion.cget("text") == "✓":
-        inversiones.append([pago,monto,fecha])
+        try:
+            inversiones.loc[len(inversiones)] = [pago, monto, fecha]
+        except NameError:
+            inversiones.loc[len(inversiones)] = [pago, monto, datetime.date.today()]
+        inversiones.to_csv("inversiones.csv")
     print(inversiones)
 
     
