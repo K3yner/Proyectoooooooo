@@ -8,6 +8,7 @@ pagos = []
 recurrentes = {}
 inversiones = []
 
+
 #FUNCIONES PARA DEFINIR LA FECHA
 def mostrar_calendario(fecha_Label):
      #Colocar el popUP
@@ -84,11 +85,14 @@ def aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas,nombres_p
         #Agregar la venta al diccionario de ventas
         else:
             ingreso = cantidad*precios_productos[nombres_productos.index(producto)]
-            ventas.append([producto, cantidad, ingreso, fecha])
+            try: 
+                ventas.append([producto, cantidad, ingreso, fecha])
+            except NameError:
+                ventas.append([producto, cantidad, ingreso, datetime.date.today()])
             print(ventas) #Print temporal para ver si funciona correctamente
             popUp_ingresos.withdraw()
         #Si la cantidad ingresada no es un número entero, mostrar error
-    except:
+    except TypeError:
         gen.advertencia("La cantidad debe ser un número entero. Por favor intente de nuevo", cajaTexto2)
 
         

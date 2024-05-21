@@ -2,8 +2,11 @@ from Fomularios import ModuloGeneral as gen
 from util import Ventana as util_ventana
 import tkinter as tk
 
+
+    
+
 #FUNCIONES PARA AÑADIR CATEGORÍA
-def añadirCategoria(productos):  #Cuando se presiona el botón añadir categoría
+def añadirCategoria(productos,categorías):  #Cuando se presiona el botón añadir categoría
     #Colocar el popUp
     popUp = tk.Toplevel()
     popUp.title("Añadir una categoría") #Título
@@ -15,28 +18,27 @@ def añadirCategoria(productos):  #Cuando se presiona el botón añadir categor�
     cajaTexto1 = tk.Entry(popUp)
     cajaTexto1.grid(row = 1, column = 1)
     #Botones aceptar y cancelar
-    aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarCategoria(popUp,cajaTexto1,productos))
+    aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarCategoria(popUp,cajaTexto1,productos,categorías))
     aceptar.grid(row = 2, column = 1)
     gen.cancelar(popUp, 2, 2)
     
-def aceptarCategoria(popUp,cajaTexto1,productos): #Cuando se presiona el botón aceptar en el popup Añadir Categoría
+def aceptarCategoria(popUp,cajaTexto1,productos,categorías): #Cuando se presiona el botón aceptar en el popup Añadir Categoría
     categoria = cajaTexto1.get() #Recuperar el texto de la caja y guardarlo en la variable categoría
     error = False #Variable para control de errores
     #Si la caja de texto está vacía, mostrar error
     if categoria == "":
         error = True
         gen.advertencia("Por favor ingrese un nombre para la categoría",cajaTexto1)
-    for x in productos:
-        if categoria == x:
+    if categoria in productos.categoría.values:
             error = True
             gen.advertencia("Esta categoría ya ha sido registrada. Intente de nuevo",cajaTexto1)
     if error == False:
-        productos[categoria] = {} #Añadir la variable categoría al diccionario productos como una key cuyo value es un diccionario vacío
-        print(productos) #Print temporal para verificar que funciona el programa
+        categorías.append(categoria)
+        print(categorías) #Print temporal para verificar que funciona el programa
         popUp.destroy() #Destruir el popup
     
 #FUNCIONES PARA AÑADIR PRODUCTO
-def añadirProducto(productos,Textocaja1 = "no",Textocaja2="no",command_cancel="destroy"):
+def añadirProducto(productos,categorías,Textocaja1 = "no",Textocaja2="no",command_cancel="destroy"):
     #Colocar el popUP
     popUp = tk.Toplevel()
     popUp.title("Añadir un producto") #Título
@@ -59,7 +61,7 @@ def añadirProducto(productos,Textocaja1 = "no",Textocaja2="no",command_cancel="
     #Menu de categorías
     global categoria
     categoria = tk.StringVar(popUp,"Categoría")
-    menu = tk.OptionMenu(popUp, categoria, *productos.keys()) 
+    menu = tk.OptionMenu(popUp, categoria, *categorías) 
     menu.grid(row=2, column = 1)
     #Botones aceptar y cancelar
     aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos))
@@ -82,18 +84,17 @@ def aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos):
             error = True
             gen.advertencia("Por favor poner nombre al producto",cajaTexto1)
         #Si el nombre del producto ya existe, mostrar error:
-        for x in productos:
-            for y in productos[x]:
-                if producto == y:
-                    error = True
-                    gen.advertencia("Ya existe un producto con este nombre", cajaTexto1)
+        if producto in productos.producto.values:
+            error = True
+            gen.advertencia("Ya existe un producto con este nombre", cajaTexto1)
         #Agregar el producto al diccionario de productos, con su precio
         if error == False:
-            productos[categoria][producto] = precio
+            productos.loc[len(productos)] = [producto, precio, categoria]
+            productos.to_csv("productos.csv")
             print(productos) #Print temporal para ver si funciona correctamente
             popUp.destroy()
             #Si el precio ingresado no es un número, mostrar error
-    except:
+    except TypeError:
         gen.advertencia("El precio ingresado no es válido. Por favor intente de nuevo", cajaTexto2)
         
 #FUNCIONES DEL BUSCADOR
