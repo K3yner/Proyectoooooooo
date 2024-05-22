@@ -20,13 +20,14 @@ def advertencia(advertencia,borrar="no"):
 #Row y Column: dónde se pondrá el botón
 #Command_cancel: si no se especifica, el botón solo destruye el popUp
 #Si se da un parámetro, el botón ejecuta esa función y luego destruye el botón
-def cancelar(popUp, Row, Column,command_cancel="destroy"):
+def cancelar(popUp, command_cancel="destroy"):
     def Cancel(command_cancel):
         if command_cancel!="destroy":
             command_cancel()
         popUp.destroy()
     cancelar = tk.Button(popUp, text = "Cancelar", command = lambda:Cancel(command_cancel))
-    cancelar.grid(row= Row, column = Column)
+    return cancelar
+
     
 def check(boton):
     if boton.cget("text") == "  ":
