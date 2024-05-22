@@ -6,7 +6,7 @@ import pandas as pd
     
 
 #FUNCIONES PARA AÑADIR CATEGORÍA
-def añadirCategoria(productos,categorías):  #Cuando se presiona el botón añadir categoría
+def añadirCategoria(categorías):  #Cuando se presiona el botón añadir categoría
     #Colocar el popUp
     popUp = tk.Toplevel()
     popUp.title("Añadir una categoría") #Título
@@ -18,22 +18,23 @@ def añadirCategoria(productos,categorías):  #Cuando se presiona el botón aña
     cajaTexto1 = tk.Entry(popUp)
     cajaTexto1.grid(row = 1, column = 1)
     #Botones aceptar y cancelar
-    aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarCategoria(popUp,cajaTexto1,productos,categorías))
+    aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarCategoria(popUp,cajaTexto1,categorías))
     aceptar.grid(row = 2, column = 1)
     gen.cancelar(popUp, 2, 2)
     
-def aceptarCategoria(popUp,cajaTexto1,productos,categorías): #Cuando se presiona el botón aceptar en el popup Añadir Categoría
+def aceptarCategoria(popUp,cajaTexto1,categorías): #Cuando se presiona el botón aceptar en el popup Añadir Categoría
     categoria = cajaTexto1.get() #Recuperar el texto de la caja y guardarlo en la variable categoría
     error = False #Variable para control de errores
     #Si la caja de texto está vacía, mostrar error
     if categoria == "":
         error = True
         gen.advertencia("Por favor ingrese un nombre para la categoría",cajaTexto1)
-    if categoria in productos.categoría.values:
+    if categoria in categorías.values:
             error = True
             gen.advertencia("Esta categoría ya ha sido registrada. Intente de nuevo",cajaTexto1)
     if error == False:
-        categorías.append(categoria)
+        categorías.loc[len(categorías)] = [categoria]
+        categorías.to_csv("categorías.csv")
         print(categorías) #Print temporal para verificar que funciona el programa
         popUp.destroy() #Destruir el popup
     
@@ -61,7 +62,7 @@ def añadirProducto(productos,categorías,Textocaja1 = "no",Textocaja2="no",comm
     #Menu de categorías
     global categoria
     categoria = tk.StringVar(popUp,"Categoría")
-    menu = tk.OptionMenu(popUp, categoria, *categorías) 
+    menu = tk.OptionMenu(popUp, categoria, *categorías["categorías"]) 
     menu.grid(row=2, column = 1)
     #Botones aceptar y cancelar
     aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos))

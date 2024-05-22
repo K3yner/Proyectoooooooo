@@ -8,14 +8,14 @@ from pandastable import Table
 
 class AñadirProductos():
 
-    def __init__(self,panel_principal, productos):
+    def __init__(self,panel_principal, productos,categorías):
         self.barra_superior1 = tk.Frame(panel_principal)
         self.barra_superior1.pack(side= tk.TOP, fill= "x", expand=False)
 
         self.barra_inferior = tk.Frame(panel_principal)
         self.barra_inferior.pack(side = tk.BOTTOM, fill="both", expand= True)
 
-        self.controles_barra_superior(productos)
+        self.controles_barra_superior(productos,categorías)
         self.buscador(productos)
         
         self.cuadro_Productos(productos)
@@ -24,10 +24,10 @@ class AñadirProductos():
         #Crear diccionario de productos vacíos
         #productos = {"Sin categoría":{}}
 
-    def controles_barra_superior(self, productos):
-        self.Añadir_Categoria = tk. Button(self.barra_superior1,text="Añadir Categoría", command= lambda: pr.añadirCategoria(productos,categorías))
+    def controles_barra_superior(self, productos,categorías):
+        self.Añadir_Categoria = tk. Button(self.barra_superior1,text="Añadir Categoría", command= lambda: pr.añadirCategoria(categorías))
         self.Añadir_Categoria.pack(side=tk.LEFT)
-        self.Añadir_Producto = tk.Button(self.barra_superior1, text="Añadir Producto", command = lambda: pr.añadirProducto(productos,productos["categoría"]))
+        self.Añadir_Producto = tk.Button(self.barra_superior1, text="Añadir Producto", command = lambda: pr.añadirProducto(productos,categorías))
         self.Añadir_Producto.pack(side=tk.LEFT)
 
     def buscador(self, productos):

@@ -12,6 +12,17 @@ from Fomularios.PaginaContabilidad import ContabilidadDiaria
 from Fomularios.PaginaContabilidadMensual import ContaMensual
 import pandas as pd
 
+#crear el df/csv de categorías
+try:
+    categorías = pd.read_csv("categorías.csv")
+except:
+    cosa = {"categorías": ["Sin categoría"]}
+    columnas = ["categorías"]
+    categorías = pd.DataFrame(cosa, columns= columnas)
+    categorías.to_csv("categorías.csv")
+    categorías = pd.read_csv("categorías.csv")
+#Eliminar la columna inútil de index que tiene el csv >:v
+categorías = categorías.drop(categorías.iloc[:,0:1].columns, axis= 1)
 
 #crear el df / csv de productos
 try:
@@ -176,7 +187,7 @@ class pagina(tk.Tk):
     #Función para abrir la pestaña de productos    
     def abrir_Añadir_producto(self):
         self.limpiar_panel(self.cuerpo_principal)
-        AñadirProductos(self.cuerpo_principal, productos) #se envía el df productos para crear su respectiba tabla
+        AñadirProductos(self.cuerpo_principal, productos,categorías) #se envía el df productos para crear su respectiva tabla
     
     #función para abrir la pestaña de contabilidad diaria
     def abrir_ContabilidadDiaria(self):
