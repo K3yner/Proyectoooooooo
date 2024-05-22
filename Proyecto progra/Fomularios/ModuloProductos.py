@@ -7,20 +7,34 @@ import pandas as pd
 
 #FUNCIONES PARA AÑADIR CATEGORÍA
 def añadirCategoria(categorías):  #Cuando se presiona el botón añadir categoría
-    #Colocar el popUp
+    #Crear el popUp
     popUp = tk.Toplevel()
-    popUp.title("Añadir una categoría") #Título
-    popUp.config(width=300, height=100) #Dimensiones
-    util_ventana.centrarVentana(popUp, 300, 100)
+    popUp.geometry("300x150")
+    popUp.resizable(0,0)
+    popUp.title("Añadir una categoría")
+    w,h = 300, 100
+    util_ventana.centrarVentana(popUp,w,h)
+    #Configurar las columnas y filas para el centrado
+    popUp.columnconfigure(0, weight=1)
+    popUp.columnconfigure(1, weight=1)
+    popUp.columnconfigure(2, weight=1)
+    popUp.columnconfigure(3, weight=1)
+    popUp.rowconfigure(0, weight=1)
+    popUp.rowconfigure(1, weight=1)
+    popUp.rowconfigure(2, weight=1)
+    popUp.rowconfigure(3, weight=1)
     #Labels con las instrucciones
-    tk.Label(popUp, text = "Escriba el nombre de la categoría").grid(row = 0, column = 0)
+    username_label = tk.Label(popUp, text = "Escriba el nombre de la categoría")
+    username_label.grid(column=0, row=0, padx=5, pady=5, columnspan=4)
     #Colocar la caja de texto para que el usuario ingrese el nombre
     cajaTexto1 = tk.Entry(popUp)
-    cajaTexto1.grid(row = 1, column = 1)
-    #Botones aceptar y cancelar
+    cajaTexto1.grid(column = 0, row = 1, padx=5, pady=5, columnspan=4, sticky=tk.EW)
+    #Boton aceptar
     aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarCategoria(popUp,cajaTexto1,categorías))
-    aceptar.grid(row = 2, column = 1)
-    gen.cancelar(popUp, 2, 2)
+    aceptar.grid(column = 1, row=2, padx=5, pady=5, sticky=tk.E)
+    #Boton Cancelar
+    cancel = gen.cancelar(popUp)
+    cancel.grid(column = 2, row=2, padx=5, pady=5, sticky=tk.W)
     
 def aceptarCategoria(popUp,cajaTexto1,categorías): #Cuando se presiona el botón aceptar en el popup Añadir Categoría
     categoria = cajaTexto1.get() #Recuperar el texto de la caja y guardarlo en la variable categoría

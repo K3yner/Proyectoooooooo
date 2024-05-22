@@ -10,6 +10,7 @@ class AñadirProductos():
 
     def __init__(self,panel_principal, productos,categorías):
         self.barra_superior1 = tk.Frame(panel_principal)
+        #self.barra_superior1.columnconfigure(10,)
         self.barra_superior1.pack(side= tk.TOP, fill= "x", expand=False)
 
         self.barra_inferior = tk.Frame(panel_principal)
