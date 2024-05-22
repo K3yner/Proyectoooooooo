@@ -150,4 +150,4 @@ def regresar(nombreL,precioL,categoriaL,editar,eliminar,volver):
     editar.grid_forget()
     eliminar.grid_forget()
     volver.grid_forget()
-                    
+

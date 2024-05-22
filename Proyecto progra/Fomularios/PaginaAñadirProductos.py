@@ -3,6 +3,7 @@ from Config import COLOR_CUERPO_PRINCIPAL
 from Fomularios import ModuloGeneral as gen 
 from Fomularios import ModuloProductos as pr
 import pandas as pd
+from pandastable import Table
 
 #Crear o abrir el df / csv de productos
 try:
@@ -28,6 +29,9 @@ class AñadirProductos():
 
         self.controles_barra_superior()
         self.buscador()
+        
+        self.cuadro_Productos()
+        
         #PRODUCTOS
         #Crear diccionario de productos vacíos
         #productos = {"Sin categoría":{}}
@@ -35,7 +39,7 @@ class AñadirProductos():
     def controles_barra_superior(self):
         self.Añadir_Categoria = tk. Button(self.barra_superior1,text="Añadir Categoría", command= lambda: pr.añadirCategoria(productos,categorías))
         self.Añadir_Categoria.pack(side=tk.LEFT)
-        self.Añadir_Producto = tk.Button(self.barra_superior1, text="Añadir Producto", command = lambda: pr.añadirProducto(productos,categorías))
+        self.Añadir_Producto = tk.Button(self.barra_superior1, text="Añadir Producto", command = lambda: pr.añadirProducto(productos,productos["categoría"]))
         self.Añadir_Producto.pack(side=tk.LEFT)
 
     def buscador(self):
@@ -46,5 +50,10 @@ class AñadirProductos():
         self.buscador_productos.bind("<FocusIn>", lambda x:gen.borrar_texto(x,self.buscador_productos))
         self.buscador_productos.bind("<FocusOut>", lambda x:pr.texto_buscador_productos(x,self.buscador_productos))
         self.buscador_productos.bind("<Return>", lambda x:pr.buscar_producto(self.barra_inferior,x,self.buscador_productos,productos,self))
+
+    def cuadro_Productos(self):
+        self.table = Table(self.barra_inferior, dataframe= productos, showtoolbar= True, showstatusbar= True, editable= True)
+        self.table.show()
+        
 
         
