@@ -17,12 +17,17 @@ class ContaMensual():
         self.barra_Superior1.config(bg= COLOR_CUERPO_PRINCIPAL)
         self.barra_Superior1.pack(side= tk.TOP, fill= "x", expand=False)
 
+        self.barra_Media = tk.Frame(panel_principal)
+        self.barra_Media.config(bg= COLOR_CUERPO_PRINCIPAL)
+        self.barra_Media.pack(side = tk.TOP, fill="both", expand= False)
+        
         self.barra_Inferior = tk.Frame(panel_principal)
-        self.barra_Inferior.config(bg= COLOR_CUERPO_PRINCIPAL)
-        self.barra_Inferior.pack(side = tk.BOTTOM, fill="both", expand= True)
+        self.barra_Inferior.config(bg = COLOR_CUERPO_PRINCIPAL)
+        self.barra_Inferior.pack(side = tk.BOTTOM, fill="both", expand= False)
         
         self.controlessuperiores(productos, ventas, pagos, recurrentes, inversiones)
         self.cuadro_ventasMensuales(ventas)
+        self.cuadro_pagosMensuales(pagos)
         
     def controlessuperiores(self, productos, ventas, pagos, recurrentes, inversiones):
 
@@ -48,5 +53,14 @@ class ContaMensual():
         ventas["fecha"] = ventas["fecha"].dt.date
         
         cuadro = ventas[ventas["fecha"].apply(lambda x:x.month) == fecha.month]
+        self.table = Table(self.barra_Media, dataframe= cuadro, showtoolbar= False, showstatusbar= True, editable= False)
+        self.table.show()
+    
+    def cuadro_pagosMensuales(self, pagos):
+        pagos["fecha"] = pd.to_datetime(pagos["fecha"])
+        
+        pagos["fecha"] = pagos["fecha"].dt.date
+        
+        cuadro = pagos[pagos["fecha"].apply(lambda x:x.month) == fecha.month]
         self.table = Table(self.barra_Inferior, dataframe= cuadro, showtoolbar= False, showstatusbar= True, editable= False)
         self.table.show()
