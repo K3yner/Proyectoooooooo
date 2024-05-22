@@ -38,6 +38,7 @@ except:
     ventas = pd.read_csv("ventas.csv")
 #Eliminar la columna inútil de index que tiene el csv >:v
 ventas = ventas.drop(ventas.iloc[:,0:1].columns, axis= 1)
+#ventas = pd.to_datetime(ventas["fecha"])
 
 #Crear o abrir el df / csv de pagos
 try:

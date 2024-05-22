@@ -43,5 +43,10 @@ class ContaMensual():
         self.boton_Mes.grid(row=0, column=0)
 
     def cuadro_ventasMensuales(self, ventas):
-        self.table = Table(self.barra_Inferior, dataframe= ventas, showtoolbar= False, showstatusbar= True, editable= False)
+        ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+        
+        ventas["fecha"] = ventas["fecha"].dt.date
+        
+        cuadro = ventas[ventas["fecha"].apply(lambda x:x.month) == fecha.month]
+        self.table = Table(self.barra_Inferior, dataframe= cuadro, showtoolbar= False, showstatusbar= True, editable= False)
         self.table.show()

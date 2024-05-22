@@ -8,7 +8,8 @@ from tkcalendar import Calendar
 import datetime
 import os
 from pandastable import Table #necesario para las tablas
-
+import pandas as pd
+from datetime import date
 
 
 
@@ -50,7 +51,20 @@ class ContabilidadDiaria():
     
     #creación de cuadro de ventas
     def cuadro_ventasDiarias(self, ventas):
-        cuadro = ventas[ventas["fecha"]== str(fecha)]
+        date_format = '%Y-%m-%d'
+
+        #ventas["fecha"] = date(ventas["fecha"].str.split("-"))
+        
+        ventas["fecha"] = pd.to_datetime(ventas["fecha"])
+        
+        ventas["fecha"] = ventas["fecha"].dt.date
+        
+        #Fecha = pd.to_datetime(datetime.date.today(),format= "%Y-%m-%d")
+        Fecha = datetime.date(fecha.year,fecha.month,fecha.day)
+        #Fecha = ventas["fecha"]
+        cuadro = ventas[ventas["fecha"]== Fecha]
+        #print(Fecha)
+        print(ventas)
         #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
         #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
         self.table = Table(self.barra_inferior, dataframe= cuadro, showtoolbar= False, showstatusbar= True, editable= False)
