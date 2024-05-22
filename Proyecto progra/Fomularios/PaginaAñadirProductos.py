@@ -115,6 +115,7 @@ class AñadirProductos():
                 productos.to_csv("productos.csv")
                 print(productos) #Print temporal para ver si funciona correctamente
                 popUp.destroy()
+            #Refrescar la tabla
             self.table.redraw()
         #Si el precio ingresado no es un número, mostrar error
         except TypeError:
