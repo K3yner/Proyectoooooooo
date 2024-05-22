@@ -3,8 +3,8 @@ from tkinter import font
 #from tkfontawesome import icon_to_image
 from tkinter import PhotoImage
 from Config import COLOR_BARRA_SUPERIOR, COLOR_CUERPO_PRINCIPAL, COLOR_MENU_CURSOR_ENCIMA, COLOR_MENU_LATERAL
-import util.Ventana as util_ventana
-import util.imagenes as util_img
+import Ventana as util_ventana
+
 from Fomularios.Sitioenconstruccion import Enconstrucción
 from Fomularios.Sitioenconstruccion2 import Enconstrucción2
 from Fomularios.PaginaAñadirProductos import AñadirProductos

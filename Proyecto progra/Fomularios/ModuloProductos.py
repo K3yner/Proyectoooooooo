@@ -1,9 +1,8 @@
 from Fomularios import ModuloGeneral as gen
-from util import Ventana as util_ventana
+import Ventana as util_ventana
 import tkinter as tk
 import pandas as pd
-
-    
+from pandastable import Table
 
 #FUNCIONES PARA AÑADIR CATEGORÍA
 def añadirCategoria(categorías):  #Cuando se presiona el botón añadir categoría
@@ -39,7 +38,7 @@ def aceptarCategoria(popUp,cajaTexto1,categorías): #Cuando se presiona el botó
         popUp.destroy() #Destruir el popup
     
 #FUNCIONES PARA AÑADIR PRODUCTO
-def añadirProducto(productos,categorías,Textocaja1 = "no",Textocaja2="no",command_cancel="destroy"):
+def añadirProducto(productos,categorías,Textocaja1 = "no",Textocaja2="no",índice = "No"):
     #Colocar el popUP
     popUp = tk.Toplevel()
     popUp.title("Añadir un producto") #Título
@@ -65,11 +64,11 @@ def añadirProducto(productos,categorías,Textocaja1 = "no",Textocaja2="no",comm
     menu = tk.OptionMenu(popUp, categoria, *categorías["categorías"]) 
     menu.grid(row=2, column = 1)
     #Botones aceptar y cancelar
-    aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos))
+    aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos,índice))
     aceptar.grid(row = 2, column = 2)
-    gen.cancelar(popUp, 2, 3,command_cancel)
+    gen.cancelar(popUp, 2, 3)
     
-def aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos):
+def aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos,índice):
     categoria = categoria.get()
     try:
         #Guardar el precio en una variable como un float con dos decimales
@@ -90,7 +89,11 @@ def aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos):
             gen.advertencia("Ya existe un producto con este nombre", cajaTexto1)
         #Agregar el producto al diccionario de productos, con su precio
         if error == False:
-            productos.loc[len(productos)] = [producto, precio, categoria]
+            if índice == "No":
+                productos.loc[len(productos)] = [producto, precio, categoria]
+                
+            else:
+                productos.loc[índice] = [producto, precio, categoria]
             productos.to_csv("productos.csv")
             print(productos) #Print temporal para ver si funciona correctamente
             popUp.destroy()
@@ -102,48 +105,48 @@ def aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos):
 def texto_buscador_productos(evento,buscador_productos):
     buscador_productos.insert(0,"🔎                       Buscar un producto")
 
-def buscar_producto(self,evento,buscador_productos,productos,ventana):
-    find = False
+def buscar_producto(self,evento,buscador_productos,productos,categorías,ventana):
+    #Recuperar el texto que se buscó
     busqueda = buscador_productos.get()
+    #Borrar lo escrito y resetear la caja de texto
     buscador_productos.delete(0, tk.END)
     buscador_productos.insert(0,"🔎                       Buscar un producto")
-    try:
-        for x in productos:
-            for y in productos[x]:
-                if busqueda.lower() == y.lower():
-                    nombreL = tk.Label(self, text = "Producto: "+ y)
-                    nombreL.grid(row=4,column=2)
-                    precioL = tk.Label(self, text = "Precio: Q." + str(productos[x][y]))
-                    precioL.grid(row=5,column=2)
-                    categoriaL = tk.Label(self, text = "Categoría: " + x)
-                    categoriaL.grid(row=6,column=2)
-                    editar = tk.Button(self,text="Editar",command=lambda:editar_producto(productos,x,y,ventana,nombreL,precioL,categoriaL,editar,eliminar,volver))
-                    editar.grid(row=7,column=2)
-                    eliminar=tk.Button(self, text="Eliminar",command=lambda:eliminar_producto(productos,x,y,nombreL,precioL,categoriaL,editar,eliminar,volver))
-                    eliminar.grid(row=7,column=3)
-                    volver= tk.Button(self, text="Volver",command=lambda:regresar(nombreL,precioL,categoriaL,editar,eliminar,volver))
-                    volver.grid(row=7,column=1)
-                    find = True
-        if find !=True:
-            gen.advertencia("El producto no se ha encontrado")
-    except KeyError:
+    #Buscar el producto en el dataframe
+    if busqueda in productos.producto.values:
+        #Si se encuentra el producto obtener el índice
+        indice = productos.index[productos["producto"]==busqueda]
+        #Crear eqtiquetas con la información del producto, obtenida del dataframe usando el índice
+        nombreL = tk.Label(self, text = "Producto: "+ busqueda)
+        nombreL.grid(row=2,column=2)
+        precioL = tk.Label(self, text = "Precio: Q." + productos["precio"].iloc[indice])
+        precioL.grid(row=3,column=2)
+        categoriaL = tk.Label(self, text = "Categoría: " + productos["categoría"].iloc[indice])
+        categoriaL.grid(row=4,column=2)
+        #Crear y mapear el botón editar
+        editar = tk.Button(self,text="Editar",command=lambda:editar_producto(productos,categorías,indice,nombreL,precioL,categoriaL,editar,eliminar,volver))
+        editar.grid(row=7,column=2)
+        #Crear y mapear el botón eliminar
+        eliminar=tk.Button(self, text="Eliminar",command=lambda:eliminar_producto(productos,indice,nombreL,precioL,categoriaL,editar,eliminar,volver))
+        eliminar.grid(row=7,column=3)
+        #Crear y mapear el botón volver
+        volver= tk.Button(self, text="Volver",command=lambda:regresar(nombreL,precioL,categoriaL,editar,eliminar,volver))
+        volver.grid(row=7,column=1)
+    else:
         gen.advertencia("El producto no se ha encontrado")
+
         
-def editar_producto(productos,x,y,ventana,nombreL,precioL,categoriaL,editar,eliminar,volver):
-    editado = productos[x].pop(y)
-    añadirProducto(productos,y,editado,command_cancel=lambda:cancel_Edit(productos,x,y,editado))
+def editar_producto(productos,categorías,indice,nombreL,precioL,categoriaL,editar,eliminar,volver):
+    añadirProducto(productos,categorías,Textocaja1 = str(productos.at[indice,]),Textocaja2=float(productos["precio"].iloc[indice]),índice = indice)
     regresar(nombreL,precioL,categoriaL,editar,eliminar,volver)
     
-def cancel_Edit(productos,x,y,editado):
-    productos[x][y] = editado
-    print(productos)
-    
-def eliminar_producto(productos,x,y,nombreL,precioL,categoriaL,editar,eliminar,volver):
-    productos[x].pop(y)
+def eliminar_producto(productos,indice,nombreL,precioL,categoriaL,editar,eliminar,volver):
+    productos = productos.drop(indice,axis=0).reset_index(drop=True)
+    productos.to_csv("productos.csv")
     print(productos)
     gen.advertencia("El producto ha sido eliminado")
     regresar(nombreL,precioL,categoriaL,editar,eliminar,volver)
         
+#Función para volver a la tabla original
 def regresar(nombreL,precioL,categoriaL,editar,eliminar,volver):
     nombreL.destroy()
     precioL.destroy()
@@ -151,4 +154,5 @@ def regresar(nombreL,precioL,categoriaL,editar,eliminar,volver):
     editar.grid_forget()
     eliminar.grid_forget()
     volver.grid_forget()
+
 

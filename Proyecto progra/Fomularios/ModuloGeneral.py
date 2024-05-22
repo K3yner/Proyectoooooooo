@@ -1,7 +1,8 @@
 import tkinter as tk
 import datetime
 import calendar
-from util import Ventana as util_ventana
+import Ventana as util_ventana
+
 #Función para mostrar un error (sobre lo recuperado de una caja de texto).
 #Parámetro "advertencia" = texto del popUp de error
 #Parámetro "borrar" = caja de texto que se debe borrar porque es inválida
