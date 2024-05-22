@@ -51,7 +51,10 @@ class AñadirProductos():
         self.buscador_productos.bind("<FocusOut>", lambda x:pr.texto_buscador_productos(x,self.buscador_productos))
         self.buscador_productos.bind("<Return>", lambda x:pr.buscar_producto(self.barra_inferior,x,self.buscador_productos,productos,self))
 
+    #se crea la tabla de productos
     def cuadro_Productos(self):
+        #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
+        #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
         self.table = Table(self.barra_inferior, dataframe= productos, showtoolbar= True, showstatusbar= True, editable= True)
         self.table.show()
         

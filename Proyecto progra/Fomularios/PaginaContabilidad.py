@@ -144,6 +144,9 @@ class ContabilidadDiaria():
         self.boton_Mes = tk.Button(self.barra_superior1, text="Mes: ", command = cnt.mes)
         self.conta_diaria = tk.Button(self.barra_superior1, text="Diario", command = cambiarA_diario)
     
+    #creación de cuadro de ventas
     def cuadro_ventasDiarias(self):
+        #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
+        #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
         self.table = Table(self.barra_inferior, dataframe= ventas, showtoolbar= False, showstatusbar= True, editable= False)
         self.table.show()
