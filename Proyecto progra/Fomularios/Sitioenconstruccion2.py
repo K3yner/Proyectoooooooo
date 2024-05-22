@@ -4,7 +4,7 @@ from Config import COLOR_CUERPO_PRINCIPAL
 
 class Enconstrucción2():
 
-    def __init__(self, panel_principal, logo):
+    def __init__(self, panel_principal):
         self.barra_superior = tk.Frame(panel_principal)
         self.barra_superior.pack(side= tk.TOP, fill= "x", expand= False)
 

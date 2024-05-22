@@ -10,13 +10,83 @@ from Fomularios.Sitioenconstruccion2 import Enconstrucción2
 from Fomularios.PaginaAñadirProductos import AñadirProductos
 from Fomularios.PaginaContabilidad import ContabilidadDiaria
 from Fomularios.PaginaContabilidadMensual import ContaMensual
+import pandas as pd
+
+
+#crear el df / csv de productos
+try:
+    productos = pd.read_csv("productos.csv")
+except:
+    cosa = {"producto": [], "precio":[], "categoría":[]}
+    columnas = ["producto", "precio","categoría"]
+    productos = pd.DataFrame(cosa, columns= columnas)
+    productos.to_csv("productos.csv")
+    productos = pd.read_csv("productos.csv")
+#Eliminar la columna inútil de index que tiene el csv >:v
+productos = productos.drop(productos.iloc[:,0:1].columns, axis= 1)
+
+#Crear o abrir el df / csv de ventas
+try:
+    ventas = pd.read_csv("ventas.csv")
+except:
+    cosa = {"producto": [], "cantidad":[], "ingreso":[],"fecha":[]}
+    columnas = ["producto", "cantidad","ingreso","fecha"]
+
+    ventas = pd.DataFrame(cosa, columns= columnas)
+
+    ventas.to_csv("ventas.csv")
+    ventas = pd.read_csv("ventas.csv")
+#Eliminar la columna inútil de index que tiene el csv >:v
+ventas = ventas.drop(ventas.iloc[:,0:1].columns, axis= 1)
+
+#Crear o abrir el df / csv de pagos
+try:
+    pagos = pd.read_csv("pagos.csv")
+except:
+    cosa = {"pago": [], "monto":[], "fecha":[],}
+    columnas = ["pago", "monto","fecha"]
+    pagos = pd.DataFrame(cosa, columns= columnas)
+    pagos.to_csv("pagos.csv")
+    pagos = pd.read_csv("pagos.csv")
+#Eliminar la columna inútil de index que tiene el csv >:v
+pagos = pagos.drop(pagos.iloc[:,0:1].columns, axis= 1)
+
+#Crear o abrir el df / csv de pagos recurrentes
+try:
+    recurrentes = pd.read_csv("recurrentes.csv")
+except:
+    cosa = {"pago": [], "monto":[]}
+    columnas = ["pago", "monto",]
+    recurrentes = pd.DataFrame(cosa, columns= columnas)
+    recurrentes.to_csv("recurrentes.csv")
+    recurrentes= pd.read_csv("recurrentes.csv")
+#Eliminar la columna inútil de index que tiene el csv >:v
+recurrentes = recurrentes.drop(recurrentes.iloc[:,0:1].columns, axis= 1)
+
+#Crear o abrir el df / csv de inversiones
+try:
+    inversiones = pd.read_csv("inversiones.csv")
+except:
+    cosa = {"inversión": [], "monto":[], "fecha":[],}
+    columnas = ["inversión", "monto","fecha"]
+    inversiones = pd.DataFrame(cosa, columns= columnas)
+    inversiones.to_csv("inversiones.csv")
+    inversiones = pd.read_csv("inversiones.csv")
+#Eliminar la columna inútil de index que tiene el csv >:v
+inversiones = inversiones.drop(inversiones.iloc[:,0:1].columns, axis= 1)
+
+
+
+
+#--------------------------------
+#Todos esos df fueron creados para poder utilizarse en el resto de modulos del programa.
+
+
 
 
 class pagina(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.img_sitio_construccion = util_img.leer_imagen("./Imagenes/sitio_construccion.png", (300,300))
-        self.img_sitio_construccion2 = util_img.leer_imagen("./Imagenes/grua.jpg", (300,300))
         self.config_ventana()
         self.panels()
         self.controles_barraSuperior()
@@ -65,8 +135,8 @@ class pagina(tk.Tk):
 
         info_botones = [
             ("Contabilidad diaria", "\uf109", self.Boton1, self.abrir_ContabilidadDiaria),
-            ("Contabilidad mensual", "\uf03e", self.Boton3, self.abrir_ContabilidadMensual),
-            ("Añadir productos", "\uf007", self.Boton2, self.abrir_Añadir_producto),
+            ("Contabilidad mensual", "\uf03e", self.Boton2, self.abrir_ContabilidadMensual), #Se agregó la pagina de contabilidad mensual (en proceso) y se cambió el orden de los botones
+            ("Añadir productos", "\uf007", self.Boton3, self.abrir_Añadir_producto),
             ("Boton4", "\uf013", self.Boton4, self.abrir_construccion2),
         ]
 
@@ -101,24 +171,30 @@ class pagina(tk.Tk):
 
     def abrir_construccion(self):
         self.limpiar_panel(self.cuerpo_principal)
-        Enconstrucción(self.cuerpo_principal, self.img_sitio_construccion)
-    
+        Enconstrucción(self.cuerpo_principal)
+
+    #Función para abrir la pestaña de productos    
     def abrir_Añadir_producto(self):
         self.limpiar_panel(self.cuerpo_principal)
-        AñadirProductos(self.cuerpo_principal)
+        AñadirProductos(self.cuerpo_principal, productos) #se envía el df productos para crear su respectiba tabla
     
+    #función para abrir la pestaña de contabilidad diaria
     def abrir_ContabilidadDiaria(self):
         self.limpiar_panel(self.cuerpo_principal)
-        ContabilidadDiaria(self.cuerpo_principal)
+        ContabilidadDiaria(self.cuerpo_principal, productos, ventas, pagos, recurrentes, inversiones) # se envían lso df para su posterior uso
+        ## el df de ventas es usado en la construcción de la tabla de contabilidad
 
+    #función para abrir la pestaña de contabilidad mensual
     def abrir_ContabilidadMensual(self):
         self.limpiar_panel(self.cuerpo_principal)
         ContaMensual(self.cuerpo_principal)
 
+
     def abrir_construccion2(self):
         self.limpiar_panel(self.cuerpo_principal)
-        Enconstrucción2(self.cuerpo_principal, self.img_sitio_construccion2)
-        
+        Enconstrucción2(self.cuerpo_principal)
+    
+    ##función para limpiar panel
     def limpiar_panel(self,panel):
         for widget in panel.winfo_children():
             widget.destroy()
