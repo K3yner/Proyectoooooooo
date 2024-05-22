@@ -187,7 +187,7 @@ class pagina(tk.Tk):
     #función para abrir la pestaña de contabilidad mensual
     def abrir_ContabilidadMensual(self):
         self.limpiar_panel(self.cuerpo_principal)
-        ContaMensual(self.cuerpo_principal)
+        ContaMensual(self.cuerpo_principal, productos, ventas, pagos, recurrentes, inversiones)
 
 
     def abrir_construccion2(self):

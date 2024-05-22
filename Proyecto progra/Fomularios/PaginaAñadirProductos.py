@@ -25,11 +25,14 @@ class AñadirProductos():
         #productos = {"Sin categoría":{}}
 
     def controles_barra_superior(self, productos):
-        self.Añadir_Categoria = tk. Button(self.barra_superior1,text="Añadir Categoría", command= lambda: pr.añadirCategoria(productos,categorías))
+        self.Añadir_Categoria = tk. Button(self.barra_superior1,text="Añadir Categoría", command= lambda: pr.añadirCategoria(productos,productos["categoría"]))
         self.Añadir_Categoria.pack(side=tk.LEFT)
         self.Añadir_Producto = tk.Button(self.barra_superior1, text="Añadir Producto", command = lambda: pr.añadirProducto(productos,productos["categoría"]))
         self.Añadir_Producto.pack(side=tk.LEFT)
 
+        
+    
+    
     def buscador(self, productos):
         #Buscador
         self.buscador_productos = tk.Entry(self.barra_superior1,width=50)
@@ -38,6 +41,8 @@ class AñadirProductos():
         self.buscador_productos.bind("<FocusIn>", lambda x:gen.borrar_texto(x,self.buscador_productos))
         self.buscador_productos.bind("<FocusOut>", lambda x:pr.texto_buscador_productos(x,self.buscador_productos))
         self.buscador_productos.bind("<Return>", lambda x:pr.buscar_producto(self.barra_inferior,x,self.buscador_productos,productos,self))
+
+
 
     #se crea la tabla de productos
     def cuadro_Productos(self, productos):
