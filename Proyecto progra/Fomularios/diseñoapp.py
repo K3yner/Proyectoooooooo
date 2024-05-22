@@ -64,8 +64,8 @@ class pagina(tk.Tk):
 
         info_botones = [
             ("Contabilidad diaria", "\uf109", self.Boton1, self.abrir_ContabilidadDiaria),
+            ("Contabilidad mensual", "\uf03e", self.Boton3, self.abrir_construccion),
             ("Añadir productos", "\uf007", self.Boton2, self.abrir_Añadir_producto),
-            ("Boton3", "\uf03e", self.Boton3, self.abrir_construccion),
             ("Boton4", "\uf013", self.Boton4, self.abrir_construccion2),
         ]
 

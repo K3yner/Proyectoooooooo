@@ -14,6 +14,3 @@ class Enconstrucción():
         self.Titulo.config(fg="#222d33", font= ("Arial", 30), bg = COLOR_CUERPO_PRINCIPAL)
         self.Titulo.pack(side = tk.TOP, fill = "both", expand=True)
 
-        self.imagen = tk.Label(self.barra_inferior, image = logo)
-        self.imagen.place(x=0,y=0, relheight=1, relwidth=1)
-        self.imagen.pack(fg = "#fff", font=("Roboto", 10), bg = COLOR_CUERPO_PRINCIPAL)
