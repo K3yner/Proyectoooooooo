@@ -9,6 +9,7 @@ from Fomularios.Sitioenconstruccion import Enconstrucción
 from Fomularios.Sitioenconstruccion2 import Enconstrucción2
 from Fomularios.PaginaAñadirProductos import AñadirProductos
 from Fomularios.PaginaContabilidad import ContabilidadDiaria
+from Fomularios.PaginaContabilidadMensual import ContaMensual
 
 
 class pagina(tk.Tk):
@@ -64,7 +65,7 @@ class pagina(tk.Tk):
 
         info_botones = [
             ("Contabilidad diaria", "\uf109", self.Boton1, self.abrir_ContabilidadDiaria),
-            ("Contabilidad mensual", "\uf03e", self.Boton3, self.abrir_construccion),
+            ("Contabilidad mensual", "\uf03e", self.Boton3, self.abrir_ContabilidadMensual),
             ("Añadir productos", "\uf007", self.Boton2, self.abrir_Añadir_producto),
             ("Boton4", "\uf013", self.Boton4, self.abrir_construccion2),
         ]
@@ -110,9 +111,14 @@ class pagina(tk.Tk):
         self.limpiar_panel(self.cuerpo_principal)
         ContabilidadDiaria(self.cuerpo_principal)
 
+    def abrir_ContabilidadMensual(self):
+        self.limpiar_panel(self.cuerpo_principal)
+        ContaMensual(self.cuerpo_principal)
+
     def abrir_construccion2(self):
         self.limpiar_panel(self.cuerpo_principal)
         Enconstrucción2(self.cuerpo_principal, self.img_sitio_construccion2)
+        
     def limpiar_panel(self,panel):
         for widget in panel.winfo_children():
             widget.destroy()
