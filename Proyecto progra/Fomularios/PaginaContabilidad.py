@@ -44,9 +44,9 @@ class ContabilidadDiaria():
         self.fecha_Label.grid(row=0,column=1)
         
         self.Añadir_Ingreso_Diario = tk. Button(self.barra_superior1, text="Añadir Ingreso",command= lambda: cnt.añadirIngreso(ventas,productos))
-        self.Añadir_Ingreso_Diario.grid(row=2, column=1)
+        self.Añadir_Ingreso_Diario.grid(row=1, column=0)
         self.Añadir_Pago_Diario = tk. Button(self.barra_superior1, text="Añadir Pago", command= lambda: cnt.añadirPago(pagos,inversiones,recurrentes))
-        self.Añadir_Pago_Diario.grid(row=2, column=2)
+        self.Añadir_Pago_Diario.grid(row=1, column=1)
         
     
     #creación de cuadro de ventas
