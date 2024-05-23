@@ -53,7 +53,7 @@ def añadirIngreso(ventas,productos,boton_fecha=False):
         global producto
         producto = tk.StringVar(popUp_ingresos,"Producto")
         #lista_productos = productos["producto"].tolist()
-        menu = tk.OptionMenu(popUp_ingresos, producto, productos["producto"]) 
+        menu = tk.OptionMenu(popUp_ingresos, producto, *productos["producto"]) 
         menu.grid(row=2, column = 1)
     #Botones aceptar y cancelar
         aceptar = tk.Button(popUp_ingresos, text = "Aceptar", command = lambda: aceptarIngreso(popUp_ingresos,cajaTexto2,producto,productos,ventas))

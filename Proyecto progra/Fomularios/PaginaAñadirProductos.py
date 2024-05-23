@@ -3,7 +3,7 @@ from Config import COLOR_CUERPO_PRINCIPAL
 from Fomularios import ModuloGeneral as gen 
 from pandastable import Table
 from Fomularios import ModuloGeneral as gen
-import Ventana as util_ventana
+from util import Ventana as util_ventana
 import pandas as pd
 
 class AñadirProductos():
@@ -36,7 +36,7 @@ class AñadirProductos():
         aceptar.grid(row = 2, column = 1)
         gen.cancelar(popUp, 2, 2)
 
-    def aceptarCategoria(popUp,cajaTexto1,categorías): #Cuando se presiona el botón aceptar en el popup Añadir Categoría
+    def aceptarCategoria(self,popUp,cajaTexto1,categorías): #Cuando se presiona el botón aceptar en el popup Añadir Categoría
         categoria = cajaTexto1.get() #Recuperar el texto de la caja y guardarlo en la variable categoría
         error = False #Variable para control de errores
         #Si la caja de texto está vacía, mostrar error
@@ -114,7 +114,10 @@ class AñadirProductos():
                 print(productos) #Print temporal para ver si funciona correctamente
                 popUp.destroy()
             #Refrescar la tabla
-            self.table.redraw()
+            if len(productos) == 0:
+                self.cuadro_Productos(productos)
+            else:
+                self.table.redraw()
         #Si el precio ingresado no es un número, mostrar error
         except TypeError:
             gen.advertencia("El precio ingresado no es válido. Por favor intente de nuevo", cajaTexto2)
@@ -188,6 +191,6 @@ class AñadirProductos():
  #se crea la tabla de productos
     def cuadro_Productos(self, productos):
         #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
-        productos = productos[["categoría","producto","precio"]].sort_values(by="categoría")
+        #productos = productos[["categoría","producto","precio"]].sort_values(by="categoría")
         self.table = Table(self.barra_inferior, dataframe= productos, showtoolbar= False, showstatusbar= True, editable= False)
         self.table.show()
