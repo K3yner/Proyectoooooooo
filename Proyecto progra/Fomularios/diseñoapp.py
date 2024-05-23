@@ -5,7 +5,7 @@ from tkinter import PhotoImage
 from Config import COLOR_BARRA_SUPERIOR, COLOR_CUERPO_PRINCIPAL, COLOR_MENU_CURSOR_ENCIMA, COLOR_MENU_LATERAL
 import util.Ventana as util_ventana
 import util.imagenes as util_img
-from Fomularios.Sitioenconstruccion import Enconstrucción
+from Fomularios.PaginaEstadísticas import Estadísticas
 from Fomularios.Sitioenconstruccion2 import Enconstrucción2
 from Fomularios.PaginaAñadirProductos import AñadirProductos
 from Fomularios.PaginaContabilidad import ContabilidadDiaria
@@ -149,7 +149,7 @@ class pagina(tk.Tk):
             ("Contabilidad diaria", "\uf109", self.Boton1, self.abrir_ContabilidadDiaria),
             ("Contabilidad mensual", "\uf03e", self.Boton2, self.abrir_ContabilidadMensual), #Se agregó la pagina de contabilidad mensual (en proceso) y se cambió el orden de los botones
             ("Añadir productos", "\uf007", self.Boton3, self.abrir_Añadir_producto),
-            ("Boton4", "\uf013", self.Boton4, self.abrir_construccion2),
+            ("Boton4", "\uf013", self.Boton4, self.abrir_Estadísticas),
         ]
 
         for text, icon, button, comando in info_botones:
@@ -181,9 +181,9 @@ class pagina(tk.Tk):
         else:
             self.menu_lateral.pack(side = tk.LEFT, fill = "y")
 
-    def abrir_construccion(self):
+    def abrir_Estadísticas(self):
         self.limpiar_panel(self.cuerpo_principal)
-        Enconstrucción(self.cuerpo_principal)
+        Estadísticas(self.cuerpo_principal,ventas,pagos,inversiones)
 
     #Función para abrir la pestaña de productos    
     def abrir_Añadir_producto(self):
