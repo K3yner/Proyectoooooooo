@@ -7,7 +7,7 @@ from Fomularios import ModuloContabilidad as cnt
 from tkcalendar import Calendar
 import datetime
 import os
-from pandastable import Table #necesario para las tablas
+from pandastable import Table, TableModel #necesario para las tablas
 import pandas as pd
 from datetime import date
 
@@ -56,10 +56,11 @@ class ContabilidadDiaria():
         self.calendario.withdraw()
         self.seleccionar.destroy()
         if actualizar == True:
-            self.tableVentas.destroy()
-            self.tablePagos.destroy()
-            self.cuadro_pagosDiarios(pagos)
-            self.cuadro_ventasDiarias(ventas)
+            Fecha = datetime.date(self.fecha.year,self.fecha.month,self.fecha.day)
+            self.cuadroPagos = pagos[pagos["fecha"]== Fecha]
+            self.cuadroVentas = ventas[ventas["fecha"]== Fecha]
+            self.tablePagos.redraw()
+            self.tableVentas.redraw()
 
 
     #FUNCIONES PARA AÑADIR INGRESO
@@ -211,15 +212,19 @@ class ContabilidadDiaria():
             except NameError:
                 inversiones.loc[len(inversiones)] = [pago, monto, datetime.date.today()]
             inversiones.to_csv("inversiones.csv")
+            self.tablePagos.redraw()
         print(inversiones)    
             
  
     def controles_barra_superior(self, productos, ventas, pagos, recurrentes, inversiones):
-        self.fecha = datetime.date.today()
+        #self.fecha = datetime.date.today()
         #Botones de la contabilidad diaria
         self.boton_Fecha = tk.Button(self.barra_superior1, text = "Fecha:", command= lambda: self.mostrar_calendario(self.fecha_Label,pagos,ventas,actualizar=True))
         self.boton_Fecha.grid(row=0,column=0)
-        string_fecha = gen.fecha_letras(self.fecha)
+        try:
+            string_fecha = gen.fecha_letras(self.fecha)
+        except AttributeError:
+            string_fecha = gen.fecha_letras(datetime.date.today())
         self.fecha_Label = tk.Label(self.barra_superior1,text=string_fecha)
         self.fecha_Label.grid(row=0,column=1)
         
@@ -232,24 +237,23 @@ class ContabilidadDiaria():
     #creación de cuadro de ventas
     def cuadro_ventasDiarias(self, ventas):
         ventas["fecha"] = pd.to_datetime(ventas["fecha"])
-        
         ventas["fecha"] = ventas["fecha"].dt.date
-        
-        Fecha = datetime.date(self.fecha.year,self.fecha.month,self.fecha.day)
-        cuadro = ventas[ventas["fecha"]== Fecha]
+        #hoy = datetime.date.today()
+        #hoy = datetime.date(hoy.year,hoy.month,hoy.day)
+        self.cuadroVentas = ventas[ventas["fecha"]== self.fecha]
         #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
         #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
-        self.tableVentas = Table(self.barra_media, dataframe= cuadro, showtoolbar= False, showstatusbar= True, editable= False)
+        self.tableVentas = Table(self.barra_media, dataframe= self.cuadroVentas, showtoolbar= False, showstatusbar= True, editable= False)
         self.tableVentas.show()
         
     def cuadro_pagosDiarios(self, pagos):
         pagos["fecha"] = pd.to_datetime(pagos["fecha"])
         
         pagos["fecha"] = pagos["fecha"].dt.date
-        
-        Fecha = datetime.date(self.fecha.year,self.fecha.month,self.fecha.day)
-        cuadro = pagos[pagos["fecha"]== Fecha]
+        hoy = datetime.date.today()
+        hoy = datetime.date(hoy.year,hoy.month,hoy.day)
+        self.cuadroPagos = pagos[pagos["fecha"]== hoy]
         #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
         #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
-        self.tablePagos = Table(self.barra_inferior, dataframe= cuadro, showtoolbar= False, showstatusbar= True, editable= False)
+        self.tablePagos = Table(self.barra_inferior, dataframe= self.cuadroPagos, showtoolbar= False, showstatusbar= True, editable= False)
         self.tablePagos.show()
