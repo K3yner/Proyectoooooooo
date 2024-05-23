@@ -115,7 +115,7 @@ class ContabilidadDiaria():
             try: 
                 ventas.loc[len(ventas)] = [producto, cantidad, ingreso, self.fecha]
                 ventas.to_csv("ventas.csv")
-            except NameError:
+            except AttributeError:
                 ventas.loc[len(ventas)] = [producto, cantidad, ingreso, datetime.date.today()]
                 ventas.to_csv("ventas.csv")
             #Actualizar cuadro de ventas
