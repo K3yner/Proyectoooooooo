@@ -238,9 +238,9 @@ class ContabilidadDiaria():
     def cuadro_ventasDiarias(self, ventas):
         ventas["fecha"] = pd.to_datetime(ventas["fecha"])
         ventas["fecha"] = ventas["fecha"].dt.date
-        #hoy = datetime.date.today()
-        #hoy = datetime.date(hoy.year,hoy.month,hoy.day)
-        self.cuadroVentas = ventas[ventas["fecha"]== self.fecha]
+        hoy = datetime.date.today()
+        hoy = datetime.date(hoy.year,hoy.month,hoy.day)
+        self.cuadroVentas = ventas[ventas["fecha"]== hoy]
         #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
         #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
         self.tableVentas = Table(self.barra_media, dataframe= self.cuadroVentas, showtoolbar= False, showstatusbar= True, editable= False)

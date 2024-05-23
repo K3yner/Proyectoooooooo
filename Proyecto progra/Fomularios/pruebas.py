@@ -1,17 +1,27 @@
 import tkinter as tk
-from tkinter import ttk
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+import matplotlib.pyplot as plt
+from matplotlib.figure import Figure
+import pandas as pd
 
 ventana = tk.Tk()
-ventana.geometry("600x500")
+ventana.geometry("1000x1000")
 
-cuadro = ttk.Treeview(ventana, columns=("col1", "col2", "col3"))
-w = 80
-columnas =["#0","col1", "col2", "col3"]
-for i in range(0,len(columnas)-1):
-    cuadro.column(columnas[i], width=w, anchor="center")
-nombres_columnas = ["Ventas", "Pagos", "Ingresos", "Egresos"]
-for i in range(0,len(columnas)-1):
-    cuadro.heading(columnas[i], text= nombres_columnas[i], anchor= "center")
+df = pd.read_csv("productos.csv")
+
+fig1 = Figure(figsize=(5,4),dpi=100)
+fig1.add_subplot().bar(df['producto'], df['precio'])
+canvas1 = FigureCanvasTkAgg(fig1, master=ventana)
+canvas1.draw()
+canvas1.get_tk_widget().grid(row=0,column=0)
+
+categorías = pd.DataFrame(df.value_counts(df["categoría"])).reset_index()
+fig2 = Figure(figsize=(5,4),dpi=100)
+fig2.add_subplot().bar(categorías["categoría"],categorías["count"])
+canvas2 = FigureCanvasTkAgg(fig2, master=ventana)
+canvas2.draw()
+canvas2.get_tk_widget().grid(row=0,column=1)
+
 
 ventana.mainloop()
 
