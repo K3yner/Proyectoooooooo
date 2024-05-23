@@ -32,6 +32,15 @@ class Estadísticas():
         canvas1.draw()
         canvas1.get_tk_widget().grid(row=2,column=0)
 
+
+
+
+
+
+
+
+        
+
         #PIE CHART DE PRODUCTOS CON MÁS INGRESOS (2)
         self.Titulo2 = tk.Label(self.barra_superior, text= "Por ingreso")
         self.Titulo2.config(fg="#222d33", font= ("Arial", 20), bg = COLOR_CUERPO_PRINCIPAL)
