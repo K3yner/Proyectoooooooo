@@ -26,27 +26,28 @@ class Estadísticas():
         self.Titulo1 = tk.Label(self.barra_superior, text= "Por cantidad")
         self.Titulo1.config(fg="#222d33", font= ("Arial", 20), bg = COLOR_CUERPO_PRINCIPAL)
         self.Titulo1.grid(row = 1, column = 0)
+
+        productos = ventas.value_counts(ventas["producto"]).reset_index()["producto"]
+        cantidades = []
+        for producto in productos:
+            cantidades.append(ventas[ventas["producto"]==producto]["cantidad"].sum())
+
         self.productosXcantidad = Figure(figsize=(5,4),dpi=80)
-        self.productosXcantidad.add_subplot().bar(ventas['fecha'], ventas['ingreso'])
+        self.productosXcantidad.add_subplot().pie(cantidades,labels=productos,autopct=lambda pct: int(pct/100.*sum(cantidades)))
         canvas1 = FigureCanvasTkAgg(self.productosXcantidad, master=self.barra_inferior)
         canvas1.draw()
         canvas1.get_tk_widget().grid(row=2,column=0)
-
-
-
-
-
-
-
-
-        
 
         #PIE CHART DE PRODUCTOS CON MÁS INGRESOS (2)
         self.Titulo2 = tk.Label(self.barra_superior, text= "Por ingreso")
         self.Titulo2.config(fg="#222d33", font= ("Arial", 20), bg = COLOR_CUERPO_PRINCIPAL)
         self.Titulo2.grid(row = 1, column = 1)
+        ingreso = []
+        for producto in productos:
+            ingreso.append(ventas[ventas["producto"]==producto]["ingreso"].sum())
+
         self.productosXingreso = Figure(figsize=(5,4),dpi=80)
-        self.productosXcantidad.add_subplot().bar(ventas['fecha'], ventas['ingreso'])
-        canvas2 = FigureCanvasTkAgg(self.productosXcantidad, master=self.barra_inferior)
+        self.productosXingreso.add_subplot().pie(ingreso,labels=productos,autopct=lambda pct: "Q." + str(round(float(pct/100.*sum(ingreso)),2)))
+        canvas2 = FigureCanvasTkAgg(self.productosXingreso, master=self.barra_inferior)
         canvas2.draw()
-        canvas2.get_tk_widget().grid(row=1,column=1)
+        canvas2.get_tk_widget().grid(row=2,column=1)
