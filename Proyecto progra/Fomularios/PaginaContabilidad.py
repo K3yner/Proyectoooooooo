@@ -166,7 +166,7 @@ class ContabilidadDiaria():
         #Menu de Pagos Recurrentes
         if len(recurrentes) > 0:
             self.recurrente = tk.StringVar(self.popUp_pagos,"Pagos Recurrentes")
-            menu = tk.OptionMenu(self.popUp_pagos, self.recurrente, *recurrentes["pago"],command = lambda x: self.pagoRecurrente(recurrentes)) 
+            menu = tk.OptionMenu(self.popUp_pagos, self.recurrente, *recurrentes["pago"],command = lambda x: self.pagoRecurrente(x,recurrentes)) 
             menu.grid(row=2, column = 3)
         #Botones aceptar y cancelar
         aceptar = tk.Button(self.popUp_pagos, text = "Aceptar", command = lambda: self.aceptarPago(pagos,recurrentes,inversiones))
@@ -174,9 +174,10 @@ class ContabilidadDiaria():
         cancelar = tk.Button(self.popUp_pagos, text = "Cancelar", command = self.popUp_pagos.withdraw)
         cancelar.grid(row= 4, column = 3)
         
-    def pagoRecurrente(self,recurrentes):
-        self.cajaTexto1.insert(0,self.recurrente)
-        indice = recurrentes.index[recurrentes["pago"]==self.recurrente]
+    def pagoRecurrente(self,x,recurrentes):
+        self.cajaTexto1.insert(0,x)
+        indice = recurrentes.index[recurrentes["pago"]==x]
+        print(indice)
         self.cajaTexto2.insert(0,float(recurrentes.iloc[indice,1]))
         
     def aceptarPago(self,pagos,recurrentes,inversiones):
