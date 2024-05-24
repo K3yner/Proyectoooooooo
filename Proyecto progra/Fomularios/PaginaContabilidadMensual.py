@@ -118,6 +118,8 @@ class ContaMensual():
                 ventas.to_csv("ventas.csv")
             #Actualizar cuadro de ventas
             ventas1 = pd.read_csv("ventas.csv") # Se crea un df temporal para actualizar la tabla
+            #Eliminar la columna inútil de index que tiene el csv >:v
+            ventas1 = ventas1.drop(ventas1.iloc[:,0:1].columns, axis= 1)
             self.cuadro_ventasMensuales(ventas1) # Se llama a la función del cuadro para que vuelva a ser dibujada
             
             print(ventas1) #Print temporal para ver si funciona correctamente
@@ -147,10 +149,10 @@ class ContaMensual():
         tk.Label(self.popUp_pagos, text = "Nombre del pago").grid(row = 0, column = 1)
         tk.Label(self.popUp_pagos, text = "Monto del pago").grid(row = 0, column = 3)
         #Colocar cajas de texto para que el usuario ingrese los datos
-        cajaTexto1 = tk.Entry(self.popUp_pagos)
-        cajaTexto2 = tk.Entry(self.popUp_pagos)
-        cajaTexto1.grid(row = 1, column = 1)
-        cajaTexto2.grid(row = 1, column = 3)
+        self.cajaTexto1 = tk.Entry(self.popUp_pagos)
+        self.cajaTexto2 = tk.Entry(self.popUp_pagos)
+        self.cajaTexto1.grid(row = 1, column = 1)
+        self.cajaTexto2.grid(row = 1, column = 3)
         #Botones Marcar como recurrente y marcar como inversión
         tk.Label(self.popUp_pagos, text = "Marcar como recurrente").grid(row = 2, column = 2)
         tk.Label(self.popUp_pagos, text = "Marcar como inversión").grid(row = 3, column = 2)
@@ -190,7 +192,6 @@ class ContaMensual():
                 except NameError:
                     pagos.loc[len(pagos)] = [pago, monto, datetime.date.today()]
                 pagos.to_csv("pagos.csv")
-                self.tablePagos.redraw()
                 print(pagos) #Print temporal para ver si funciona correctamente
                 self.popUp_pagos.withdraw()
         #Si el precio ingresado no es un número, mostrar error
@@ -214,7 +215,10 @@ class ContaMensual():
             except NameError:
                 inversiones.loc[len(inversiones)] = [pago, monto, datetime.date.today()]
             inversiones.to_csv("inversiones.csv")
-            self.tablePagos.redraw()
+        pagos1 = pd.read_csv("pagos.csv")
+        #Eliminar la columna inútil de index que tiene el csv >:v
+        pagos1 = pagos1.drop(pagos1.iloc[:,0:1].columns, axis= 1)
+        self.cuadro_pagosMensuales(pagos1)
         print(inversiones)
     
     
@@ -250,7 +254,7 @@ class ContaMensual():
 
         self.Añadir_Ingreso_Mensual = tk. Button(self.barra_Superior1, text="Añadir Ingreso", command= lambda: self.añadirIngreso(pagos,ventas,productos))
         self.Añadir_Ingreso_Mensual.grid(row=2, column=2)
-        self.Añadir_Pago_Mensual = tk. Button(self.barra_Superior1, text="Añadir Pago", command= lambda: self.añadirPago(pagos,inversiones,recurrentes))
+        self.Añadir_Pago_Mensual = tk. Button(self.barra_Superior1, text="Añadir Pago", command= lambda: self.añadirPago(ventas,pagos,inversiones,recurrentes))
         self.Añadir_Pago_Mensual.grid(row=2, column=3)
         self.boton_Mes = tk.Button(self.barra_Superior1, text="Mes: ", command =self.mes())
         self.boton_Mes.grid(row=0, column=0)
@@ -277,3 +281,4 @@ class ContaMensual():
         cuadro = pagos[pagos["fecha"].apply(lambda x:x.month) == hoy.month]
         self.table_pagosMensuales = Table(self.barra_Inferior, dataframe= cuadro, showtoolbar= False, showstatusbar= True, editable= False)
         self.table_pagosMensuales.show()
+        self.table_pagosMensuales.redraw()
