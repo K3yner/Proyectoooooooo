@@ -157,7 +157,7 @@ class Estadísticas():
         lista = []
         for x in range(12):
             lista.append(ingresos_año[x-1] - egresos_año[x-1])
-        self.utilidad_graf = Figure(figsize=(5,4),dpi=100)
+        self.utilidad_graf = Figure(figsize=(5,4),dpi=80)
         ax = self.utilidad_graf.add_subplot()
         ax.plot(self.meses,lista,marker='o')
         ax.set_xlabel("Mes")
@@ -165,6 +165,7 @@ class Estadísticas():
         plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
 
         canvas = FigureCanvasTkAgg(self.utilidad_graf, master=self.barra_inferior)
+        #canvas.config(height = 100)
         canvas.draw()
         canvas.get_tk_widget().grid(row=2,column=1, pady=10, padx=10, sticky=tk.EW)
 
