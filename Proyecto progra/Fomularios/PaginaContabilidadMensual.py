@@ -163,7 +163,7 @@ class ContaMensual():
         #Menu de Pagos Recurrentes
         if len(recurrentes) > 0:
             self.recurrente = tk.StringVar(self.popUp_pagos,"Pagos Recurrentes")
-            menu = tk.OptionMenu(self.popUp_pagos, self.recurrente, *recurrentes["pago"],command = lambda x: self.pagoRecurrente(x,recurrentes)) 
+            menu = tk.OptionMenu(self.popUp_pagos, self.recurrente, *recurrentes["pago"],command = lambda x: self.pagoRecurrente(recurrentes)) 
             menu.grid(row=2, column = 3)
         #Botones aceptar y cancelar
         aceptar = tk.Button(self.popUp_pagos, text = "Aceptar", command = lambda: self.aceptarPago(pagos,recurrentes,inversiones))
