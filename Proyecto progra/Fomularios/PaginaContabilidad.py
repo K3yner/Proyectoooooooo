@@ -59,9 +59,13 @@ class ContabilidadDiaria():
             Fecha = datetime.date(self.fecha.year,self.fecha.month,self.fecha.day)
             self.cuadroPagos = pagos[pagos["fecha"]== Fecha]
             self.cuadroVentas = ventas[ventas["fecha"]== Fecha]
-            self.tablePagos.redraw()
-            self.tableVentas.redraw()
-
+            ventas1 = pd.read_csv("ventas.csv") # Se crea un df temporal para actualizar la tabla
+            pagos1 = pd.read_csv("pagos.csv")
+            #Eliminar la columna inútil de index que tiene el csv >:v
+            ventas1 = ventas1.drop(ventas1.iloc[:,0:1].columns, axis= 1)
+            pagos1 = pagos1.drop(pagos1.iloc[:,0:1].columns, axis= 1)
+            self.cuadro_ventasDiarias(ventas1)
+            self.cuadro_pagosDiarios(pagos1)
 
     #FUNCIONES PARA AÑADIR INGRESO
     def añadirIngreso(self,pagos,ventas,productos,boton_fecha=False):
@@ -248,9 +252,12 @@ class ContabilidadDiaria():
     def cuadro_ventasDiarias(self, ventas):
         ventas["fecha"] = pd.to_datetime(ventas["fecha"])
         ventas["fecha"] = ventas["fecha"].dt.date
-        hoy = datetime.date.today()
-        hoy = datetime.date(hoy.year,hoy.month,hoy.day)
-        self.cuadroVentas = ventas[ventas["fecha"]== hoy]
+        try:
+            self.cuadroVentas = ventas[ventas["fecha"]== self.fecha]
+        except AttributeError:
+            hoy = datetime.date.today()
+            hoy = datetime.date(hoy.year,hoy.month,hoy.day)
+            self.cuadroVentas = ventas[ventas["fecha"]== hoy]
         #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
         #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
         self.tableVentas = Table(self.barra_media, dataframe= self.cuadroVentas, showtoolbar= False, showstatusbar= True, editable= False)
@@ -259,11 +266,13 @@ class ContabilidadDiaria():
         
     def cuadro_pagosDiarios(self, pagos):
         pagos["fecha"] = pd.to_datetime(pagos["fecha"])
-        
         pagos["fecha"] = pagos["fecha"].dt.date
-        hoy = datetime.date.today()
-        hoy = datetime.date(hoy.year,hoy.month,hoy.day)
-        self.cuadroPagos = pagos[pagos["fecha"]== hoy]
+        try:
+            self.cuadroPagos = pagos[pagos["fecha"]== self.fecha]
+        except AttributeError:
+            hoy = datetime.date.today()
+            hoy = datetime.date(hoy.year,hoy.month,hoy.day)
+            self.cuadroPagos = pagos[pagos["fecha"]== hoy]
         #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
         #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
         self.tablePagos = Table(self.barra_inferior, dataframe= self.cuadroPagos, showtoolbar= False, showstatusbar= True, editable= False)
