@@ -21,7 +21,7 @@ class Estadísticas():
         self.barra_superior.grid(row=0, column=0, sticky=tk.EW, padx=10, pady=10)
         self.grafica = tk.StringVar(self.barra_superior,"Estadísticas")
         self.opciones = ["Productos vendidos", "Ventas", "Utilidad","Retorno de inversión"]
-        menu = tk.OptionMenu(self.barra_superior, self.grafica, *self.opciones, command = lambda x: self.estadisticas(x,ventas)) 
+        menu = tk.OptionMenu(self.barra_superior, self.grafica, *self.opciones, command = lambda x: self.estadisticas(x,ventas,pagos)) 
         menu.grid(row=0,column=0)
 
         self.barra_inferior = tk.Frame(panel_principal)
@@ -42,7 +42,7 @@ class Estadísticas():
         for widget in panel.winfo_children():
             widget.destroy()
 
-    def estadisticas(self,x,ventas):
+    def estadisticas(self,x,ventas,pagos):
         if x == "Productos vendidos":
             self.limpiar_panel(self.barra_inferior)
             self.Titulo = tk.Label(self.barra_inferior, text= "Proporción de productos vendidos")
@@ -75,7 +75,8 @@ class Estadísticas():
             self.Ventas(ventas)
 
         if x == "Utilidad":
-            print("Hola")
+            self.limpiar_panel(self.barra_inferior)
+            self.utilidad(ventas,pagos)
         if x == "Retorno de inversión":
             print("Hola")
 
@@ -143,7 +144,21 @@ class Estadísticas():
         canvas3.draw()
         canvas3.get_tk_widget().grid(row=2, column=0, pady=10, padx=10)
 
+    def utilidad(self,ventas,pagos):
+        ingresos_año = self.montoXmes(ventas,"ingreso")
+        egresos_año = self.montoXmes(pagos,"monto")
+        lista = []
+        for x in range(12):
+            lista.append(ingresos_año[x-1] - egresos_año[x-1])
+        self.utilidad_graf = Figure(figsize=(5,4),dpi=100)
+        ax = self.utilidad_graf.add_subplot()
+        ax.plot(self.meses,lista,marker='o')
+        ax.set_xlabel("Mes")
+        ax.set_ylabel("Utilidad")
+        plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
 
-        
+        canvas = FigureCanvasTkAgg(self.utilidad_graf, master=self.barra_inferior)
+        canvas.draw()
+        canvas.get_tk_widget().grid(row=1,column=0)
 
         
