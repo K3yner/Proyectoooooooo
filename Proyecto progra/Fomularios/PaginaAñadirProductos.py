@@ -9,6 +9,7 @@ import pandas as pd
 class AñadirProductos():
 
     def __init__(self,panel_principal, productos,categorías):
+        self.Productos = productos
         self.barra_superior1 = tk.Frame(panel_principal)
         #self.barra_superior1.columnconfigure(10,)
         self.barra_superior1.pack(side= tk.TOP, fill= "x", expand=False)
@@ -16,9 +17,9 @@ class AñadirProductos():
         self.barra_inferior = tk.Frame(panel_principal)
         self.barra_inferior.pack(side = tk.BOTTOM, fill="both", expand= True)
 
-        self.controles_barra_superior(productos,categorías)
-        self.buscador(productos,categorías)
-        self.cuadro_Productos(productos)
+        self.controles_barra_superior(categorías)
+        self.buscador(categorías)
+        self.cuadro_Productos()
         
     def añadirCategoria(self,categorías):  #Cuando se presiona el botón añadir categoría
     #Colocar el popUp
@@ -54,7 +55,7 @@ class AñadirProductos():
     
     
     #FUNCIONES PARA AÑADIR PRODUCTO
-    def añadirProducto(self,productos,categorías,Textocaja1 = "no",Textocaja2="no",índice = "No"):
+    def añadirProducto(self,categorías,Textocaja1 = "no",Textocaja2="no",índice = "No"):
         #Colocar el popUP
         popUp = tk.Toplevel()
         popUp.title("Añadir un producto") #Título
@@ -80,11 +81,11 @@ class AñadirProductos():
         menu = tk.OptionMenu(popUp, categoria, *categorías["categorías"]) 
         menu.grid(row=2, column = 1)
         #Botones aceptar y cancelar
-        aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: self.aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,productos,índice))
+        aceptar = tk.Button(popUp, text = "Aceptar", command = lambda: self.aceptarProducto(popUp,cajaTexto1,cajaTexto2,categoria,índice))
         aceptar.grid(row = 2, column = 2)
         gen.cancelar(popUp, 2, 3)
         
-    def aceptarProducto(self,popUp,cajaTexto1,cajaTexto2,categoria,productos,índice):
+    def aceptarProducto(self,popUp,cajaTexto1,cajaTexto2,categoria,índice):
         categoria = categoria.get()
         try:
             #Guardar el precio en una variable como un float con dos decimales
@@ -100,85 +101,86 @@ class AñadirProductos():
                 error = True
                 gen.advertencia("Por favor poner nombre al producto",cajaTexto1)
             #Si el nombre del producto ya existe, mostrar error:
-            if producto in productos.producto.values:
+            if producto in self.Productos.producto.values:
                 error = True
                 gen.advertencia("Ya existe un producto con este nombre", cajaTexto1)
             #Agregar el producto al diccionario de productos, con su precio
             if error == False:
                 if índice == "No":
-                    productos.loc[len(productos)] = [producto, precio, categoria]
+                    self.Productos.loc[len(self.Productos)] = [producto, precio, categoria]
                     
                 else:
-                    productos.loc[índice] = [producto, precio, categoria]
-                productos.to_csv("productos.csv")
-                print(productos) #Print temporal para ver si funciona correctamente
+                    self.Productos.loc[índice] = [producto, precio, categoria]
+                self.Productos.to_csv("productos.csv")
+                print(self.Productos) #Print temporal para ver si funciona correctamente
                 popUp.destroy()
             #Refrescar la tabla
-            if len(productos) == 0:
-                self.cuadro_Productos(productos)
+            if len(self.Productos) == 0:
+                self.cuadro_Productos()
             else:
                 self.table.redraw()
         #Si el precio ingresado no es un número, mostrar error
         except TypeError:
             gen.advertencia("El precio ingresado no es válido. Por favor intente de nuevo", cajaTexto2)
 
-    def controles_barra_superior(self, productos,categorías):
+    def controles_barra_superior(self,categorías):
         self.Añadir_Categoria = tk. Button(self.barra_superior1,text="Añadir Categoría", command= lambda: self.añadirCategoria(categorías))
         self.Añadir_Categoria.pack(side=tk.LEFT)
-        self.Añadir_Producto = tk.Button(self.barra_superior1, text="Añadir Producto", command = lambda: self.añadirProducto(productos,categorías,Textocaja1 = "no",Textocaja2="no",índice = "No"))
+        self.Añadir_Producto = tk.Button(self.barra_superior1, text="Añadir Producto", command = lambda: self.añadirProducto(categorías,Textocaja1 = "no",Textocaja2="no",índice = "No"))
         self.Añadir_Producto.pack(side=tk.LEFT)
 
     def texto_buscador_productos(self,evento):
         self.buscador_productos.insert(0,"🔎                       Buscar un producto")
 
-    def buscar_producto(self,evento,productos,categorías):
+    def buscar_producto(self,evento,categorías):
         #Recuperar el texto que se buscó
-        busqueda = self.buscador_productos.get()
+        self.busqueda = self.buscador_productos.get()
         #Borrar lo escrito y resetear la caja de texto
         self.buscador_productos.delete(0, tk.END)
         self.buscador_productos.insert(0,"🔎                       Buscar un producto")
         #Buscar el producto en el dataframe
-        if busqueda in productos.producto.values:
+        if self.busqueda in self.Productos.producto.values:
             self.table.destroy()
             #Si se encuentra el producto obtener el índice
-            indice = productos.index[productos["producto"]==busqueda]
+            indice = self.Productos.index[self.Productos["producto"]==self.busqueda]
             #Crear un dataframe con solo el producto encontrado, y una tabla a partir del dataframe
-            producto_encontrado = productos[productos["producto"]==busqueda]
+            producto_encontrado = self.Productos[self.Productos["producto"]==self.busqueda]
             self.table2 = Table(self.barra_inferior, dataframe= producto_encontrado, showtoolbar= False, showstatusbar= True, editable= False)
             self.table2.show()
 
             #Crear y mapear el botón editar
-            self.editar = tk.Button(self.barra_superior1,text="Editar",command=lambda: self.editar_producto(productos,categorías,indice))
+            self.editar = tk.Button(self.barra_superior1,text="Editar",command=lambda: self.editar_producto(categorías,indice))
             self.editar.pack()
             #Crear y mapear el botón eliminar
-            self.eliminar=tk.Button(self.barra_superior1,text="Eliminar",command=lambda:self.eliminar_producto(productos,indice))
+            self.eliminar=tk.Button(self.barra_superior1,text="Eliminar",command=lambda:self.eliminar_producto(indice))
             self.eliminar.pack()
             #Crear y mapear el botón volver
-            self.volver= tk.Button(self.barra_superior1, text="Volver",command=lambda:self.regresar(productos))
+            self.volver= tk.Button(self.barra_superior1, text="Volver",command= lambda: self.regresar())
             self.volver.pack()
         else:
             gen.advertencia("El producto no se ha encontrado")
     
-    def editar_producto(self,productos,categorías,indice):
-        self.añadirProducto(productos,categorías,Textocaja1 = str(productos["producto"].iloc[indice]),Textocaja2=float(productos["precio"].iloc[indice]),índice = indice)
-        self.regresar(productos)
+    def editar_producto(self,categorías,indice):
+        self.añadirProducto(categorías,Textocaja1 = self.busqueda,Textocaja2=float(self.Productos["precio"].iloc[indice]),índice = indice)
+        self.regresar()
     
-    def eliminar_producto(self,productos,indice):
-        productos = productos.drop(indice,axis=0).reset_index(drop=True)
-        productos.to_csv("productos.csv")
-        print(productos)
+    def eliminar_producto(self,indice):
+        self.Productos = self.Productos.drop(indice,axis=0).reset_index(drop=True)
+        self.Productos.to_csv("productos.csv")
+        print(self.Productos)
         gen.advertencia("El producto ha sido eliminado")
-        self.regresar(productos)
+        self.regresar()
+
             
     #Función para volver a la tabla original
-    def regresar(self,productos):
+    def regresar(self):
         self.table2.destroy()
         self.editar.pack_forget()
         self.eliminar.pack_forget()
         self.volver.pack_forget()
-        self.cuadro_Productos(productos)
+        self.cuadro_Productos()
     
-    def buscador(self, productos, categorías):
+    def buscador(self, categorías):
         #Buscador
         self.buscador_productos = tk.Entry(self.barra_superior1,width=50)
         self.buscador_productos.pack(side = tk.LEFT)
@@ -186,11 +188,11 @@ class AñadirProductos():
         self.buscador_productos.insert(0,"🔎                       Buscar un producto")
         self.buscador_productos.bind("<FocusIn>", lambda x:gen.borrar_texto(x,self.buscador_productos))
         self.buscador_productos.bind("<FocusOut>", lambda x:self.texto_buscador_productos(x))
-        self.buscador_productos.bind("<Return>", lambda x:self.buscar_producto(x,productos,categorías))
+        self.buscador_productos.bind("<Return>", lambda x:self.buscar_producto(x,categorías))
 
  #se crea la tabla de productos
-    def cuadro_Productos(self, productos):
+    def cuadro_Productos(self):
         #se indica la tabla con los parametros en el siguente orden "frame donde se coloca, dataframe donde saca los datos, se quita la barra de opciones de la tabla, se muestra las opciones de visualización, se desactiva la función de edición"
         #productos = productos[["categoría","producto","precio"]].sort_values(by="categoría")
-        self.table = Table(self.barra_inferior, dataframe= productos, showtoolbar= False, showstatusbar= True, editable= False)
+        self.table = Table(self.barra_inferior, dataframe= self.Productos, showtoolbar= False, showstatusbar= True, editable= False)
         self.table.show()
