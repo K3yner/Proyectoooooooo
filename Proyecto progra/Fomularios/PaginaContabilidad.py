@@ -3,13 +3,13 @@ import tkinter as tk
 from tkinter import ttk
 from Config import COLOR_CUERPO_PRINCIPAL
 from Fomularios import ModuloGeneral as gen 
-from Fomularios import ModuloContabilidad as cnt
 from tkcalendar import Calendar
 import datetime
 import os
 from pandastable import Table, TableModel #necesario para las tablas
 import pandas as pd
 from datetime import date
+from util import Ventana as util_ventana
 
 
 
@@ -67,6 +67,8 @@ class ContabilidadDiaria():
     def añadirIngreso(self,pagos,ventas,productos,boton_fecha=False):
         #Crear la ventana emergente
         self.popUp_ingresos = tk.Toplevel()
+        w,h = 300, 100
+        util_ventana.centrarVentana(self.popUp_ingresos,w,h)
         #Crear el botón fecha
         if boton_fecha != False:
             fecha_ingreso = tk.Button(self.popUp_ingresos,text = "Fecha",command=lambda:self.mostrar_calendario(self.fecha_Label,pagos,ventas,actualizar=False))
@@ -114,12 +116,13 @@ class ContabilidadDiaria():
             ingreso = cantidad*precio_producto
             try: 
                 ventas.loc[len(ventas)] = [producto, cantidad, ingreso, self.fecha]
-                ventas.to_csv("ventas.csv")
             except AttributeError:
                 ventas.loc[len(ventas)] = [producto, cantidad, ingreso, datetime.date.today()]
-                ventas.to_csv("ventas.csv")
+            ventas.to_csv("ventas.csv")
             #Actualizar cuadro de ventas
             ventas1 = pd.read_csv("ventas.csv") # Se crea un df temporal para actualizar la tabla
+            #Eliminar la columna inútil de index que tiene el csv >:v
+            ventas1 = ventas1.drop(ventas1.iloc[:,0:1].columns, axis= 1)
             self.cuadro_ventasDiarias(ventas1) # Se llama a la función del cuadro para que vuelva a ser dibujada
             
             print(ventas1) #Print temporal para ver si funciona correctamente
@@ -132,9 +135,11 @@ class ContabilidadDiaria():
         self.popUp_pagos = tk.Toplevel()
         self.popUp_pagos.title("Añadir un egreso") #Título
         #self.popUp_pagos.protocol("WM_DELETE_WINDOW", self.popUp_pagos.withdraw)
+        w,h = 425, 150
+        util_ventana.centrarVentana(self.popUp_pagos,w,h)
         self.marcar_Recurrente = tk.Button(self.popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(self.marcar_Recurrente))
         self.marcar_Inversion = tk.Button(self.popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(self.marcar_Inversion))
-        self.popUp_pagos.config(width=500, height=200) #Dimensiones
+        self.popUp_pagos.config(width=w, height=h) #Dimensiones
         
         if boton_fecha != False:
             fecha_ingreso = tk.Button(self.popUp_pagos,text = "Fecha",command=lambda:self.mostrar_calendario(self.fecha_Label,pagos,ventas,actualizar=False))
@@ -147,10 +152,10 @@ class ContabilidadDiaria():
         tk.Label(self.popUp_pagos, text = "Nombre del pago").grid(row = 0, column = 1)
         tk.Label(self.popUp_pagos, text = "Monto del pago").grid(row = 0, column = 3)
         #Colocar cajas de texto para que el usuario ingrese los datos
-        cajaTexto1 = tk.Entry(self.popUp_pagos)
-        cajaTexto2 = tk.Entry(self.popUp_pagos)
-        cajaTexto1.grid(row = 1, column = 1)
-        cajaTexto2.grid(row = 1, column = 3)
+        self.cajaTexto1 = tk.Entry(self.popUp_pagos)
+        self.cajaTexto2 = tk.Entry(self.popUp_pagos)
+        self.cajaTexto1.grid(row = 1, column = 1)
+        self.cajaTexto2.grid(row = 1, column = 3)
         #Botones Marcar como recurrente y marcar como inversión
         tk.Label(self.popUp_pagos, text = "Marcar como recurrente").grid(row = 2, column = 2)
         tk.Label(self.popUp_pagos, text = "Marcar como inversión").grid(row = 3, column = 2)
@@ -161,7 +166,7 @@ class ContabilidadDiaria():
         #Menu de Pagos Recurrentes
         if len(recurrentes) > 0:
             self.recurrente = tk.StringVar(self.popUp_pagos,"Pagos Recurrentes")
-            menu = tk.OptionMenu(self.popUp_pagos, self.recurrente, *recurrentes["pago"],command = lambda x: self.pagoRecurrente(x,recurrentes)) 
+            menu = tk.OptionMenu(self.popUp_pagos, self.recurrente, *recurrentes["pago"],command = lambda x: self.pagoRecurrente(recurrentes)) 
             menu.grid(row=2, column = 3)
         #Botones aceptar y cancelar
         aceptar = tk.Button(self.popUp_pagos, text = "Aceptar", command = lambda: self.aceptarPago(pagos,recurrentes,inversiones))
@@ -190,7 +195,6 @@ class ContabilidadDiaria():
                 except NameError:
                     pagos.loc[len(pagos)] = [pago, monto, datetime.date.today()]
                 pagos.to_csv("pagos.csv")
-                self.tablePagos.redraw()
                 print(pagos) #Print temporal para ver si funciona correctamente
                 self.popUp_pagos.withdraw()
         #Si el precio ingresado no es un número, mostrar error
@@ -214,7 +218,10 @@ class ContabilidadDiaria():
             except NameError:
                 inversiones.loc[len(inversiones)] = [pago, monto, datetime.date.today()]
             inversiones.to_csv("inversiones.csv")
-            self.tablePagos.redraw()
+        pagos1 = pd.read_csv("pagos.csv")
+        #Eliminar la columna inútil de index que tiene el csv >:v
+        pagos1 = pagos1.drop(pagos1.iloc[:,0:1].columns, axis= 1)
+        self.cuadro_pagosDiarios(pagos1)
         print(inversiones)    
             
  
@@ -232,7 +239,7 @@ class ContabilidadDiaria():
         
         self.Añadir_Ingreso_Diario = tk. Button(self.barra_superior1, text="Añadir Ingreso",command= lambda: self.añadirIngreso(pagos,ventas,productos))
         self.Añadir_Ingreso_Diario.grid(row=1, column=0)
-        self.Añadir_Pago_Diario = tk. Button(self.barra_superior1, text="Añadir Pago", command= lambda: self.añadirPago(pagos,inversiones,recurrentes))
+        self.Añadir_Pago_Diario = tk. Button(self.barra_superior1, text="Añadir Pago", command= lambda: self.añadirPago(ventas,pagos,inversiones,recurrentes))
         self.Añadir_Pago_Diario.grid(row=1, column=1)
         
     
@@ -260,3 +267,4 @@ class ContabilidadDiaria():
         #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
         self.tablePagos = Table(self.barra_inferior, dataframe= self.cuadroPagos, showtoolbar= False, showstatusbar= True, editable= False)
         self.tablePagos.show()
+        self.tablePagos.redraw()
