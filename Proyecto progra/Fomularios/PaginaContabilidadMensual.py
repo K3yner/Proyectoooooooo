@@ -8,7 +8,7 @@ import datetime
 import pandas as pd
 import os
 from pandastable import Table
-
+from util import Ventana as util_ventana
 
 
 class ContaMensual():
@@ -63,6 +63,8 @@ class ContaMensual():
     def añadirIngreso(self,pagos,ventas,productos,boton_fecha=False):
         #Crear la ventana emergente
         self.popUp_ingresos = tk.Toplevel()
+        w,h = 300, 100
+        util_ventana.centrarVentana(self.popUp_ingresos,w,h)
         #Crear el botón fecha
         if boton_fecha != False:
             fecha_ingreso = tk.Button(self.popUp_ingresos,text = "Fecha",command=lambda:self.mostrar_calendario(self.fecha_Label,pagos,ventas,actualizar=False))
@@ -127,10 +129,12 @@ class ContaMensual():
         #Crear el popUP
         self.popUp_pagos = tk.Toplevel()
         self.popUp_pagos.title("Añadir un egreso") #Título
+        w,h = 425, 100
+        util_ventana.centrarVentana(self.popUp_ingresos,w,h)
         #self.popUp_pagos.protocol("WM_DELETE_WINDOW", self.popUp_pagos.withdraw)
         self.marcar_Recurrente = tk.Button(self.popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(self.marcar_Recurrente))
         self.marcar_Inversion = tk.Button(self.popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(self.marcar_Inversion))
-        self.popUp_pagos.config(width=500, height=200) #Dimensiones
+        self.popUp_pagos.config(width=w, height=h) #Dimensiones
         
         if boton_fecha != False:
             fecha_ingreso = tk.Button(self.popUp_pagos,text = "Fecha",command=lambda:self.mostrar_calendario(self.fecha_Label,pagos,ventas,actualizar=False))
