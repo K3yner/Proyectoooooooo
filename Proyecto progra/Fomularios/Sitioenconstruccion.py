@@ -33,10 +33,14 @@ class Estadísticas():
         self.panel_principal.grid_rowconfigure(1, weight=1)
 
         self.barra_superior.grid_columnconfigure(0, weight=1)
+
         self.barra_inferior.grid_columnconfigure(0, weight=1)
         self.barra_inferior.grid_columnconfigure(1, weight=1)
         self.barra_inferior.grid_columnconfigure(2, weight=1)
         self.barra_inferior.grid_rowconfigure(0, weight=1)
+        self.barra_inferior.grid_rowconfigure(1, weight=1)
+        self.barra_inferior.grid_rowconfigure(2, weight=1)
+        self.barra_inferior.grid_rowconfigure(3, weight=1)
     
     def limpiar_panel(self,panel):
         for widget in panel.winfo_children():
@@ -47,7 +51,7 @@ class Estadísticas():
             self.limpiar_panel(self.barra_inferior)
             self.Titulo = tk.Label(self.barra_inferior, text= "Proporción de productos vendidos")
             self.Titulo.config(fg="#222d33", font= ("Arial", 30), bg = COLOR_CUERPO_PRINCIPAL)
-            self.Titulo.grid(row = 0, column = 0, padx=10, pady=10, sticky=tk.N)
+            self.Titulo.grid(row = 0, column = 0, padx=10, pady=10, sticky=tk.EW, columnspan=3)
             # Subtítulos y gráficos
             self.Titulo1 = tk.Label(self.barra_inferior, text="Por cantidad")
             self.Titulo1.config(fg="#222d33", font=("Arial", 20), bg=COLOR_CUERPO_PRINCIPAL)
@@ -55,27 +59,30 @@ class Estadísticas():
 
             self.Titulo2 = tk.Label(self.barra_inferior, text="Por ingreso")
             self.Titulo2.config(fg="#222d33", font=("Arial", 20), bg=COLOR_CUERPO_PRINCIPAL)
-            self.Titulo2.grid(row=0, column=2, padx=10, pady=10, sticky=tk.N)
+            self.Titulo2.grid(row=1, column=2, padx=10, pady=10, sticky=tk.N)
             self.productos_Vendidos(ventas)
 
         if x == "Ventas": 
             self.limpiar_panel(self.barra_inferior)
             self.Titulo = tk.Label(self.barra_inferior, text= "Ventas")
             self.Titulo.config(fg="#222d33", font= ("Arial", 30), bg = COLOR_CUERPO_PRINCIPAL)
-            self.Titulo.grid(row = 0, column = 0, padx=10, pady=10, sticky=tk.N)
+            self.Titulo.grid(row = 0, column = 0, padx=10, pady=10, sticky=tk.EW, columnspan=3)
 
             self.Titulo1 = tk.Label(self.barra_inferior, text="Mensual")
             self.Titulo1.config(fg="#222d33", font=("Arial", 20), bg=COLOR_CUERPO_PRINCIPAL)
-            self.Titulo1.grid(row=1, column=1, padx=10, pady=10, sticky=tk.N)
+            self.Titulo1.grid(row=1, column=0, padx=10, pady=10, sticky=tk.N)
 
             self.Titulo2 = tk.Label(self.barra_inferior, text="Anual")
             self.Titulo2.config(fg="#222d33", font=("Arial", 20), bg=COLOR_CUERPO_PRINCIPAL)
-            self.Titulo2.grid(row=0, column=1, padx=10, pady=10, sticky=tk.N)
+            self.Titulo2.grid(row=1, column=2, padx=10, pady=10, sticky=tk.N)
 
             self.Ventas(ventas)
 
         if x == "Utilidad":
             self.limpiar_panel(self.barra_inferior)
+            self.Titulo = tk.Label(self.barra_inferior, text= "Utilidades")
+            self.Titulo.config(fg="#222d33", font= ("Arial", 30), bg = COLOR_CUERPO_PRINCIPAL)
+            self.Titulo.grid(row = 0, column = 0, padx=10, pady=10, sticky=tk.EW, columnspan=3)
             self.utilidad(ventas,pagos)
         if x == "Retorno de inversión":
             print("Hola")
@@ -91,7 +98,7 @@ class Estadísticas():
         self.productosXcantidad.add_subplot().pie(cantidades,labels=productos,autopct=lambda pct: int(pct/100.*sum(cantidades)))
         canvas1 = FigureCanvasTkAgg(self.productosXcantidad, master=self.barra_inferior)
         canvas1.draw()
-        canvas1.get_tk_widget().grid(row=1,column=0, sticky=tk.NSEW, padx=10, pady=10)
+        canvas1.get_tk_widget().grid(row=2,column=0, sticky=tk.E, padx=10, pady=10)
 
         #PIE CHART DE PRODUCTOS CON MÁS INGRESOS (2)
         ingreso = []
@@ -102,7 +109,7 @@ class Estadísticas():
         self.productosXingreso.add_subplot().pie(ingreso,labels=productos,autopct=lambda pct: "Q." + str(round(float(pct/100.*sum(ingreso)),2)))
         canvas2 = FigureCanvasTkAgg(self.productosXingreso, master=self.barra_inferior)
         canvas2.draw()
-        canvas2.get_tk_widget().grid(row=1,column=2,)
+        canvas2.get_tk_widget().grid(row=2,column=2, sticky=tk.W, padx=10,pady=10)
 
     def montoXmes(self,df,columna):
         df_año = df[df["fecha"].apply(lambda x:x.year) == datetime.date.today().year]
@@ -130,7 +137,7 @@ class Estadísticas():
         ej.set_ylabel("Ingreso")
         canvas4 = FigureCanvasTkAgg(self.ventas_mensuales, master=self.barra_inferior)
         canvas4.draw()
-        canvas4.get_tk_widget().grid(row=2, column=1, pady=10, padx=10)
+        canvas4.get_tk_widget().grid(row=2, column=0, pady=10, padx=10, sticky=tk.NSEW)
         
         #Ingresos anuales
         self.ingresos_año = self.montoXmes(ventas,"ingreso")
@@ -142,7 +149,7 @@ class Estadísticas():
         plt.setp(ax.get_xticklabels(), rotation=45, ha="right")
         canvas3 = FigureCanvasTkAgg(self.ventas_anuales, master=self.barra_inferior)
         canvas3.draw()
-        canvas3.get_tk_widget().grid(row=2, column=0, pady=10, padx=10)
+        canvas3.get_tk_widget().grid(row=2, column=2, pady=10, padx=10, sticky=tk.NSEW)
 
     def utilidad(self,ventas,pagos):
         ingresos_año = self.montoXmes(ventas,"ingreso")
@@ -159,6 +166,6 @@ class Estadísticas():
 
         canvas = FigureCanvasTkAgg(self.utilidad_graf, master=self.barra_inferior)
         canvas.draw()
-        canvas.get_tk_widget().grid(row=1,column=0)
+        canvas.get_tk_widget().grid(row=2,column=1, pady=10, padx=10, sticky=tk.EW)
 
         
