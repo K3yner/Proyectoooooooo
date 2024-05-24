@@ -130,7 +130,7 @@ class ContaMensual():
         self.popUp_pagos = tk.Toplevel()
         self.popUp_pagos.title("Añadir un egreso") #Título
         w,h = 425, 100
-        util_ventana.centrarVentana(self.popUp_ingresos,w,h)
+        util_ventana.centrarVentana(self.popUp_pagos,w,h)
         #self.popUp_pagos.protocol("WM_DELETE_WINDOW", self.popUp_pagos.withdraw)
         self.marcar_Recurrente = tk.Button(self.popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(self.marcar_Recurrente))
         self.marcar_Inversion = tk.Button(self.popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(self.marcar_Inversion))
@@ -140,17 +140,17 @@ class ContaMensual():
             fecha_ingreso = tk.Button(self.popUp_pagos,text = "Fecha",command=lambda:self.mostrar_calendario(self.fecha_Label,pagos,ventas,actualizar=False))
             fecha_ingreso.grid(row = 4, column=1)
             string_fecha = gen.fecha_letras(datetime.date.today())
-            fecha_Label = tk.Label(self.popUp_pagos,text=string_fecha)
-            fecha_Label.grid(row=4,column=2)
+            self.fecha_Label = tk.Label(self.popUp_pagos,text=string_fecha)
+            self.fecha_Label.grid(row=4,column=2)
 
         #Labels con las instrucciones
         tk.Label(self.popUp_pagos, text = "Nombre del pago").grid(row = 0, column = 1)
         tk.Label(self.popUp_pagos, text = "Monto del pago").grid(row = 0, column = 3)
         #Colocar cajas de texto para que el usuario ingrese los datos
-        cajaTexto1 = tk.Entry(self.popUp_pagos)
-        cajaTexto2 = tk.Entry(self.popUp_pagos)
-        cajaTexto1.grid(row = 1, column = 1)
-        cajaTexto2.grid(row = 1, column = 3)
+        self.cajaTexto1 = tk.Entry(self.popUp_pagos)
+        self.cajaTexto2 = tk.Entry(self.popUp_pagos)
+        self.cajaTexto1.grid(row = 1, column = 1)
+        self.cajaTexto2.grid(row = 1, column = 3)
         #Botones Marcar como recurrente y marcar como inversión
         tk.Label(self.popUp_pagos, text = "Marcar como recurrente").grid(row = 2, column = 2)
         tk.Label(self.popUp_pagos, text = "Marcar como inversión").grid(row = 3, column = 2)
@@ -161,7 +161,7 @@ class ContaMensual():
         #Menu de Pagos Recurrentes
         if len(recurrentes) > 0:
             self.recurrente = tk.StringVar(self.popUp_pagos,"Pagos Recurrentes")
-            menu = tk.OptionMenu(self.popUp_pagos, self.recurrente, *recurrentes["pago"],command = lambda x: self.pagoRecurrente(recurrentes)) 
+            menu = tk.OptionMenu(self.popUp_pagos, self.recurrente, *recurrentes["pago"],command = lambda x: self.pagoRecurrente(x,recurrentes)) 
             menu.grid(row=2, column = 3)
         #Botones aceptar y cancelar
         aceptar = tk.Button(self.popUp_pagos, text = "Aceptar", command = lambda: self.aceptarPago(pagos,recurrentes,inversiones))
@@ -169,9 +169,9 @@ class ContaMensual():
         cancelar = tk.Button(self.popUp_pagos, text = "Cancelar", command = self.popUp_pagos.withdraw)
         cancelar.grid(row= 4, column = 3)
         
-    def pagoRecurrente(self,recurrentes):
-        self.cajaTexto1.insert(0,self.recurrente)
-        indice = recurrentes.index[recurrentes["pago"]==self.recurrente]
+    def pagoRecurrente(self,x,recurrentes):
+        self.cajaTexto1.insert(0,x)
+        indice = recurrentes.index[recurrentes["pago"]==x]
         self.cajaTexto2.insert(0,float(recurrentes.iloc[indice,1]))
         
     def aceptarPago(self,pagos,recurrentes,inversiones):
@@ -190,7 +190,7 @@ class ContaMensual():
                 except NameError:
                     pagos.loc[len(pagos)] = [pago, monto, datetime.date.today()]
                 pagos.to_csv("pagos.csv")
-                self.tablePagos.redraw()
+                self.table_pagosMensuales.redraw()
                 print(pagos) #Print temporal para ver si funciona correctamente
                 self.popUp_pagos.withdraw()
         #Si el precio ingresado no es un número, mostrar error
@@ -248,9 +248,9 @@ class ContaMensual():
         self.fecha_Label = tk.Label(self.barra_Superior1,text=string_fecha)
         self.fecha_Label.grid(row=0,column=1)
 
-        self.Añadir_Ingreso_Mensual = tk. Button(self.barra_Superior1, text="Añadir Ingreso", command= lambda: self.añadirIngreso(pagos,ventas,productos))
+        self.Añadir_Ingreso_Mensual = tk. Button(self.barra_Superior1, text="Añadir Ingreso", command= lambda: self.añadirIngreso(pagos,ventas,productos,boton_fecha=True))
         self.Añadir_Ingreso_Mensual.grid(row=2, column=2)
-        self.Añadir_Pago_Mensual = tk. Button(self.barra_Superior1, text="Añadir Pago", command= lambda: self.añadirPago(pagos,inversiones,recurrentes))
+        self.Añadir_Pago_Mensual = tk. Button(self.barra_Superior1, text="Añadir Pago", command= lambda: self.añadirPago(ventas,pagos,inversiones,recurrentes,boton_fecha=True))
         self.Añadir_Pago_Mensual.grid(row=2, column=3)
         self.boton_Mes = tk.Button(self.barra_Superior1, text="Mes: ", command =self.mes())
         self.boton_Mes.grid(row=0, column=0)
