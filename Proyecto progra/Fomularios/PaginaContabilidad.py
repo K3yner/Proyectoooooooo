@@ -119,8 +119,10 @@ class ContabilidadDiaria():
                 ventas.loc[len(ventas)] = [producto, cantidad, ingreso, datetime.date.today()]
                 ventas.to_csv("ventas.csv")
             #Actualizar cuadro de ventas
-            self.tableVentas.redraw()
-            print(ventas) #Print temporal para ver si funciona correctamente
+            ventas1 = pd.read_csv("ventas.csv") # Se crea un df temporal para actualizar la tabla
+            self.cuadro_ventasDiarias(ventas1) # Se llama a la función del cuadro para que vuelva a ser dibujada
+            
+            print(ventas1) #Print temporal para ver si funciona correctamente
             self.popUp_ingresos.withdraw()
         
       
@@ -245,6 +247,7 @@ class ContabilidadDiaria():
         #### NOTA PARA MAR: ¡No toques los parametros que estan en False! No se como funcionan y no hay tiempo para usarlos
         self.tableVentas = Table(self.barra_media, dataframe= self.cuadroVentas, showtoolbar= False, showstatusbar= True, editable= False)
         self.tableVentas.show()
+        self.tableVentas.redraw()
         
     def cuadro_pagosDiarios(self, pagos):
         pagos["fecha"] = pd.to_datetime(pagos["fecha"])
