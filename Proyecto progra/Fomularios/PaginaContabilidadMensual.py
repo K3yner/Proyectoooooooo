@@ -131,8 +131,8 @@ class ContaMensual():
         #Crear el popUP
         self.popUp_pagos = tk.Toplevel()
         self.popUp_pagos.title("Añadir un egreso") #Título
-        w,h = 425, 100
-        util_ventana.centrarVentana(self.popUp_ingresos,w,h)
+        w,h = 425, 150
+        util_ventana.centrarVentana(self.popUp_pagos,w,h)
         #self.popUp_pagos.protocol("WM_DELETE_WINDOW", self.popUp_pagos.withdraw)
         self.marcar_Recurrente = tk.Button(self.popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(self.marcar_Recurrente))
         self.marcar_Inversion = tk.Button(self.popUp_pagos, text = "  ", width = 1, height = 1, command = lambda:gen.check(self.marcar_Inversion))
